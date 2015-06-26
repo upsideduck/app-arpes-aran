@@ -1,7 +1,7 @@
 from nexpy.api import nexus as nx
 import model.nexus_template
-from helper.spectrum import sp2
-from helper.spectrum import fermisurface
+from helper.spectrum import Arpes2DSpectrum
+from helper.spectrum import Arpes3DSpectrum
 import glob
 import copy
 import numpy as np
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     # root = nx.NXroot(entry)
     # root.save('test.nxs')
 	# print root.tree
-	files = glob.glob('./data/*.sp2')
+	files = glob.glob('./data/test2/*.sp2')
 	
 
 	i = 1
@@ -22,22 +22,19 @@ if __name__ == '__main__':
 		entry = None
 		root = None
 		entryid = "entry"+str(i)
-		sp2file = sp2(thefile)
-		result = sp2file.parseToNx(rotation=0.25*i)
-		entities.append(sp2file.nxEntry)
+		arpes2DSpectrum = Arpes2DSpectrum.parseSP2ToNx(thefile,rotation=float(0.25*i))
+		entities.append(arpes2DSpectrum.nxEntry)
 		i += 1
-		root = nx.NXroot(copy.deepcopy(sp2file.nxEntry))
+		root = nx.NXroot(copy.deepcopy(arpes2DSpectrum.nxEntry))
 		root.save('./data/test2/'+entryid+'.nxs')
 		del root
 	print "-----------------------------------"
 
 
 	print "Parsing fermisurface"
-	fermisurface = fermisurface()
-	result = fermisurface.parseListOfEntriesToNx(entities)
+	fermiSurfaceEntry = Arpes3DSpectrum.parseListOfEntriesToNx(entities)
+	root = nx.NXroot(fermiSurfaceEntry.nxEntry)
 	print "Fermisurface done"
-	
-	root = nx.NXroot(fermisurface.nxEntry)
 	root.save('./data/test2/fermisurface.nxs')
 	print root.tree
 
