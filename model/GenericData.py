@@ -34,5 +34,5 @@ class GenericData(QtCore.QObject):
 	title = None
 
 	def __init__(self, nxRoot):
-		super(GenericdData, self).__init__()
+		super(GenericData, self).__init__()
 
