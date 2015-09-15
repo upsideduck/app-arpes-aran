@@ -1,5 +1,5 @@
 #!/bin/sh
-python /usr/bin/pyside-uic view/mainView.ui > view/mainView.py
-python /usr/bin/pyside-uic view/bandView.ui > view/bandView.py
-python /usr/bin/pyside-uic view/fermiView.ui > view/fermiView.py
-python /usr/bin/pyside-uic view/buildView.ui > view/buildView.py
+python /usr/local/bin/pyside-uic view/mainView.ui > view/mainView.py
+python /usr/local/bin/pyside-uic view/Generic2dimView.ui > view/Generic2dimView.py
+python /usr/local/bin/pyside-uic view/Generic3dimView.ui > view/Generic3dimView.py
+python /usr/local/bin/pyside-uic view/ArpesBuildView.ui > view/ArpesBuildView.py

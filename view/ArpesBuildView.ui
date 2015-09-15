@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>BuildWindow</class>
- <widget class="QMainWindow" name="BuildWindow">
+ <class>ArpesBuildWindow</class>
+ <widget class="QMainWindow" name="ArpesBuildWindow">
   <property name="geometry">
    <rect>
     <x>0</x>

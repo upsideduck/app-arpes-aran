@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/bandView.ui'
+# Form implementation generated from reading ui file 'view/Generic2dimView.ui'
 #
-# Created: Tue Aug 18 12:00:33 2015
-#      by: pyside-uic 0.2.14 running on PySide 1.2.2
+# Created: Tue Sep 15 13:41:54 2015
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
 
-class Ui_BandWindow(object):
-    def setupUi(self, BandWindow):
-        BandWindow.setObjectName("BandWindow")
-        BandWindow.resize(1400, 862)
-        self.centralwidget = QtGui.QWidget(BandWindow)
+class Ui_Generic2dimWindow(object):
+    def setupUi(self, Generic2dimWindow):
+        Generic2dimWindow.setObjectName("Generic2dimWindow")
+        Generic2dimWindow.resize(1400, 862)
+        self.centralwidget = QtGui.QWidget(Generic2dimWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -153,26 +153,26 @@ class Ui_BandWindow(object):
         self.dataView.setObjectName("dataView")
         self.horizontalLayout.addWidget(self.dataView)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
-        BandWindow.setCentralWidget(self.centralwidget)
+        Generic2dimWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar()
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1400, 22))
         self.menubar.setObjectName("menubar")
-        BandWindow.setMenuBar(self.menubar)
-        self.statusBar = QtGui.QStatusBar(BandWindow)
+        Generic2dimWindow.setMenuBar(self.menubar)
+        self.statusBar = QtGui.QStatusBar(Generic2dimWindow)
         self.statusBar.setObjectName("statusBar")
-        BandWindow.setStatusBar(self.statusBar)
+        Generic2dimWindow.setStatusBar(self.statusBar)
 
-        self.retranslateUi(BandWindow)
+        self.retranslateUi(Generic2dimWindow)
         self.plotTools.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(BandWindow)
+        QtCore.QMetaObject.connectSlotsByName(Generic2dimWindow)
 
-    def retranslateUi(self, BandWindow):
-        BandWindow.setWindowTitle(QtGui.QApplication.translate("BandWindow", "ARAN Band Viewer", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("BandWindow", "Interpolation", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("BandWindow", "Color space", None, QtGui.QApplication.UnicodeUTF8))
-        self.kSpaceCheckBox.setText(QtGui.QApplication.translate("BandWindow", "k-space", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkAutoScale.setText(QtGui.QApplication.translate("BandWindow", "Auto scale", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("BandWindow", "Offset", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("BandWindow", "Max", None, QtGui.QApplication.UnicodeUTF8))
-        self.plotTools.setTabText(self.plotTools.indexOf(self.d3tab), QtGui.QApplication.translate("BandWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, Generic2dimWindow):
+        Generic2dimWindow.setWindowTitle(QtGui.QApplication.translate("Generic2dimWindow", "ARAN 2D Viewer", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("Generic2dimWindow", "Interpolation", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("Generic2dimWindow", "Color space", None, QtGui.QApplication.UnicodeUTF8))
+        self.kSpaceCheckBox.setText(QtGui.QApplication.translate("Generic2dimWindow", "k-space", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkAutoScale.setText(QtGui.QApplication.translate("Generic2dimWindow", "Auto scale", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Generic2dimWindow", "Offset", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Generic2dimWindow", "Max", None, QtGui.QApplication.UnicodeUTF8))
+        self.plotTools.setTabText(self.plotTools.indexOf(self.d3tab), QtGui.QApplication.translate("Generic2dimWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
 

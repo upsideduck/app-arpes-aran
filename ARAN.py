@@ -4,21 +4,17 @@ from helper.constants import *
 import sys
 from PySide import QtCore, QtGui 
 from view.mainView import Ui_MainWindow
-#from bandView import Ui_BandWindow
-#from fermiView import Ui_FermiWindow
-from controller.bandController import *
-from controller.fermiController import *
-from controller.BuildController import *
+from controller.Generic2dimController import *
+from controller.Generic3dimController import *
+from controller.ArpesBuildController import *
 from nexpy.api import nexus as nx
 import numpy as np
 from copy import *
-#import n btreeview
 
 import matplotlib
 matplotlib.use('Qt4Agg')
 matplotlib.rcParams['backend.qt4']='PySide'
 import matplotlib.pyplot as plt
-#from pylab import *
 from view.matplotlibwidget import *
 from model.ArpesData import *
 from helper.SpectrumFile import *
@@ -119,14 +115,14 @@ class MainController(QtGui.QMainWindow):
 
 	def on_loadBtnClicked(self):
 		if len(self.cData.data.shape) == 2:
-			self.windows.append(BandController(copy(self.cData),self))
+			self.windows.append(Generic2dimController(copy(self.cData),self))
 			self.windows[-1].show()
 		elif len(self.cData.data.shape) == 3:
-			self.windows.append(FermiController(copy(self.cData),self))
+			self.windows.append(Generic3dimController(copy(self.cData),self))
 			self.windows[-1].show()
 
 	def on_buildBtnClicked(self):
-		self.windows.append(BuildController(self))
+		self.windows.append(ArpesBuildController(self))
 		self.windows[-1].show()
 
 	def on_entriesBoxChanged(self,index):

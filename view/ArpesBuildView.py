@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/buildView.ui'
+# Form implementation generated from reading ui file 'view/ArpesBuildView.ui'
 #
-# Created: Tue Aug 18 12:00:33 2015
-#      by: pyside-uic 0.2.14 running on PySide 1.2.2
+# Created: Tue Sep 15 13:41:54 2015
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
 
-class Ui_BuildWindow(object):
-    def setupUi(self, BuildWindow):
-        BuildWindow.setObjectName("BuildWindow")
-        BuildWindow.resize(1074, 608)
-        self.centralwidget = QtGui.QWidget(BuildWindow)
+class Ui_ArpesBuildWindow(object):
+    def setupUi(self, ArpesBuildWindow):
+        ArpesBuildWindow.setObjectName("ArpesBuildWindow")
+        ArpesBuildWindow.resize(1074, 608)
+        self.centralwidget = QtGui.QWidget(ArpesBuildWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
@@ -77,22 +77,22 @@ class Ui_BuildWindow(object):
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem2)
         self.verticalLayout_2.addWidget(self.widget)
-        BuildWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtGui.QStatusBar(BuildWindow)
+        ArpesBuildWindow.setCentralWidget(self.centralwidget)
+        self.statusbar = QtGui.QStatusBar(ArpesBuildWindow)
         self.statusbar.setObjectName("statusbar")
-        BuildWindow.setStatusBar(self.statusbar)
+        ArpesBuildWindow.setStatusBar(self.statusbar)
 
-        self.retranslateUi(BuildWindow)
-        QtCore.QMetaObject.connectSlotsByName(BuildWindow)
+        self.retranslateUi(ArpesBuildWindow)
+        QtCore.QMetaObject.connectSlotsByName(ArpesBuildWindow)
 
-    def retranslateUi(self, BuildWindow):
-        BuildWindow.setWindowTitle(QtGui.QApplication.translate("BuildWindow", "Build", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox.setTitle(QtGui.QApplication.translate("BuildWindow", "Files", None, QtGui.QApplication.UnicodeUTF8))
-        self.loadFilesBtn.setText(QtGui.QApplication.translate("BuildWindow", "Import files", None, QtGui.QApplication.UnicodeUTF8))
-        self.exportFermiBtn.setText(QtGui.QApplication.translate("BuildWindow", "Export fermi surface", None, QtGui.QApplication.UnicodeUTF8))
-        self.groupBox_2.setTitle(QtGui.QApplication.translate("BuildWindow", "Auto fill column", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("BuildWindow", "Column", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("BuildWindow", "Initial value", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("BuildWindow", "Step", None, QtGui.QApplication.UnicodeUTF8))
-        self.autoColumnInsertBtn.setText(QtGui.QApplication.translate("BuildWindow", "Insert", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, ArpesBuildWindow):
+        ArpesBuildWindow.setWindowTitle(QtGui.QApplication.translate("ArpesBuildWindow", "Build", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("ArpesBuildWindow", "Files", None, QtGui.QApplication.UnicodeUTF8))
+        self.loadFilesBtn.setText(QtGui.QApplication.translate("ArpesBuildWindow", "Import files", None, QtGui.QApplication.UnicodeUTF8))
+        self.exportFermiBtn.setText(QtGui.QApplication.translate("ArpesBuildWindow", "Export fermi surface", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_2.setTitle(QtGui.QApplication.translate("ArpesBuildWindow", "Auto fill column", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("ArpesBuildWindow", "Column", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("ArpesBuildWindow", "Initial value", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("ArpesBuildWindow", "Step", None, QtGui.QApplication.UnicodeUTF8))
+        self.autoColumnInsertBtn.setText(QtGui.QApplication.translate("ArpesBuildWindow", "Insert", None, QtGui.QApplication.UnicodeUTF8))
 

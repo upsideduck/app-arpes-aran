@@ -8,13 +8,12 @@ matplotlib.rcParams['backend.qt4']='PySide'
 import matplotlib.pyplot as plt
 #from pylab import *
 import view.matplotlibwidget as matplotlibwidget
-from model.ArpesData import *
 
 
-class EditBaseController(QtGui.QMainWindow):
+class GenericMultiDimBaseController(QtGui.QMainWindow):
 	
 	def __init__(self, cData, view, parent=None):
-		super(EditBaseController, self ).__init__()
+		super(GenericMultiDimBaseController, self ).__init__()
 		self.view = view
 		self.cData = cData		# Holds the data for the current open experiment
 		self.cData.dataChanged.connect(self.onP_dataChanged)

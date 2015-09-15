@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/fermiView.ui'
+# Form implementation generated from reading ui file 'view/Generic3dimView.ui'
 #
-# Created: Tue Aug 18 12:00:33 2015
-#      by: pyside-uic 0.2.14 running on PySide 1.2.2
+# Created: Tue Sep 15 13:41:54 2015
+#      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
 
 from PySide import QtCore, QtGui
 
-class Ui_FermiWindow(object):
-    def setupUi(self, FermiWindow):
-        FermiWindow.setObjectName("FermiWindow")
-        FermiWindow.resize(1456, 946)
-        self.centralwidget = QtGui.QWidget(FermiWindow)
+class Ui_Generic3dimWindow(object):
+    def setupUi(self, Generic3dimWindow):
+        Generic3dimWindow.setObjectName("Generic3dimWindow")
+        Generic3dimWindow.resize(1456, 946)
+        self.centralwidget = QtGui.QWidget(Generic3dimWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
@@ -196,28 +196,28 @@ class Ui_FermiWindow(object):
         self.dataView.setObjectName("dataView")
         self.horizontalLayout.addWidget(self.dataView)
         self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
-        FermiWindow.setCentralWidget(self.centralwidget)
+        Generic3dimWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar()
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1456, 22))
         self.menubar.setObjectName("menubar")
-        FermiWindow.setMenuBar(self.menubar)
-        self.statusBar = QtGui.QStatusBar(FermiWindow)
+        Generic3dimWindow.setMenuBar(self.menubar)
+        self.statusBar = QtGui.QStatusBar(Generic3dimWindow)
         self.statusBar.setObjectName("statusBar")
-        FermiWindow.setStatusBar(self.statusBar)
+        Generic3dimWindow.setStatusBar(self.statusBar)
 
-        self.retranslateUi(FermiWindow)
+        self.retranslateUi(Generic3dimWindow)
         self.plotTools.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(FermiWindow)
+        QtCore.QMetaObject.connectSlotsByName(Generic3dimWindow)
 
-    def retranslateUi(self, FermiWindow):
-        FermiWindow.setWindowTitle(QtGui.QApplication.translate("FermiWindow", "ARAN Fermi Surface Viewer", None, QtGui.QApplication.UnicodeUTF8))
-        self.open3DDisplay.setText(QtGui.QApplication.translate("FermiWindow", "3D Display", None, QtGui.QApplication.UnicodeUTF8))
-        self.zaxisNameLbl.setText(QtGui.QApplication.translate("FermiWindow", "Energy:", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("FermiWindow", "Interpolation", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("FermiWindow", "Color space", None, QtGui.QApplication.UnicodeUTF8))
-        self.kSpaceCheckBox.setText(QtGui.QApplication.translate("FermiWindow", "k-space", None, QtGui.QApplication.UnicodeUTF8))
-        self.checkAutoScale.setText(QtGui.QApplication.translate("FermiWindow", "Auto scale", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("FermiWindow", "Offset", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("FermiWindow", "Max", None, QtGui.QApplication.UnicodeUTF8))
-        self.plotTools.setTabText(self.plotTools.indexOf(self.d3tab), QtGui.QApplication.translate("FermiWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
+    def retranslateUi(self, Generic3dimWindow):
+        Generic3dimWindow.setWindowTitle(QtGui.QApplication.translate("Generic3dimWindow", "ARAN 3D Viewer", None, QtGui.QApplication.UnicodeUTF8))
+        self.open3DDisplay.setText(QtGui.QApplication.translate("Generic3dimWindow", "3D Display", None, QtGui.QApplication.UnicodeUTF8))
+        self.zaxisNameLbl.setText(QtGui.QApplication.translate("Generic3dimWindow", "Energy:", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("Generic3dimWindow", "Interpolation", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("Generic3dimWindow", "Color space", None, QtGui.QApplication.UnicodeUTF8))
+        self.kSpaceCheckBox.setText(QtGui.QApplication.translate("Generic3dimWindow", "k-space", None, QtGui.QApplication.UnicodeUTF8))
+        self.checkAutoScale.setText(QtGui.QApplication.translate("Generic3dimWindow", "Auto scale", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Generic3dimWindow", "Offset", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Generic3dimWindow", "Max", None, QtGui.QApplication.UnicodeUTF8))
+        self.plotTools.setTabText(self.plotTools.indexOf(self.d3tab), QtGui.QApplication.translate("Generic3dimWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
 

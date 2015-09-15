@@ -1,7 +1,7 @@
 from helper.constants import *
 from PySide import QtCore, QtGui 
 from nexpy.api import nexus as nx
-from view.buildView import Ui_BuildWindow
+from view.ArpesBuildView import Ui_ArpesBuildWindow
 import numpy as np
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -16,11 +16,11 @@ from helper.SpectrumFile import *
 from model.ArpesData import *
 
 
-class BuildController(QtGui.QMainWindow):
+class ArpesBuildController(QtGui.QMainWindow):
 	
 	def __init__(self, parent=None):
-		super(BuildController, self ).__init__()
-		self.view = Ui_BuildWindow()
+		super(ArpesBuildController, self ).__init__()
+		self.view = Ui_ArpesBuildWindow()
 		self.view.setupUi(self)
 		self.configure_views()		
 
@@ -179,8 +179,8 @@ class TableOfEntriesModel(QtCore.QAbstractTableModel):
             	if index.column() == R_ANGLE_COLUMN_NR:
 	            	self.entries[index.row()].nxEntry.instrument.manipulator.rangle = float(value) 
 
-            self.dataChanged.emit(index, index)
-            self.emit(QtCore.SIGNAL("layoutChanged()"))
+	        self.emit(QtCore.SIGNAL("dataChanged(QModelIndex, QModelIndex)"), index, index)
+             self.emit(QtCore.SIGNAL("layoutChanged()"))
 
             return True
         return False

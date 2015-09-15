@@ -1,8 +1,8 @@
 from helper.constants import *
 import sys
 from PySide import QtCore, QtGui 
-from EditBaseController import *
-from view.fermiView import Ui_FermiWindow
+from GenericMultiDimBaseController import *
+from view.Generic3dimView import Ui_Generic3dimWindow
 try:
 	from mayavi import mlab
 	STATUS_MAYAVI_AVAILABLE = True
@@ -16,14 +16,14 @@ except:
 # Initial view, models and genereal setup is executed here
 #
 
-class FermiController(EditBaseController):
+class Generic3dimController(GenericMultiDimBaseController):
 
 	def __init__(self, cData, parent=None):
-		super(FermiController, self ).__init__(cData,Ui_FermiWindow(),parent)
+		super(Generic3dimController, self ).__init__(cData,Ui_Generic3dimWindow(),parent)
 		self.configure_views()
 
 	def configure_views(self):	
-		super(FermiController,self).configure_views()
+		super(Generic3dimController,self).configure_views()
 
 		self.view.open3DDisplay.clicked.connect(self.open3DViewer)
 		self.view.zaxisSlider.valueChanged[int].connect(self.on_d3SliderMoved)
@@ -38,7 +38,7 @@ class FermiController(EditBaseController):
 
 
 	def init3DView(self):
-		super(FermiController,self).init2DView()
+		super(Generic3dimController,self).init2DView()
 		self.replotData(0,0)
 		if STATUS_MAYAVI_AVAILABLE:
 			self.view.open3DDisplay.setEnabled(True)
@@ -92,7 +92,7 @@ class FermiController(EditBaseController):
 
 	## Slots
 	def on_kSpaceCheckBoxChanged(self,val):
-		super(FermiController,self).on_kSpaceCheckBoxChanged(val)
+		super(Generic3dimController,self).on_kSpaceCheckBoxChanged(val)
 		if self.cData.kdata == None and val == QtCore.Qt.Checked:
 			QtCore.QMetaObject.invokeMethod(self.mapWorker, 'makekMapFrom3D', QtCore.Qt.QueuedConnection)
 		elif not self.cData.kdata == None and val == QtCore.Qt.Checked:
@@ -101,7 +101,7 @@ class FermiController(EditBaseController):
 			self.cData.setAngleSpace()
 
 	def on_mapWorkerDone(self,result):
-		super(FermiController,self).on_mapWorkerDone(result)
+		super(Generic3dimController,self).on_mapWorkerDone(result)
 		self.cData.setkSpace()
 
 	def on_d3SliderMoved(self, val):
@@ -122,7 +122,7 @@ class FermiController(EditBaseController):
 
 
 	def onP_dataChanged(self):
-		super(FermiController,self).onP_dataChanged()
+		super(Generic3dimController,self).onP_dataChanged()
 		index = self.view.d3PlotChooser.currentIndex()
 		val = self.view.zaxisSlider.value()
 		self.replotData(index,val)

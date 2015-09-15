@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from EditBaseController import *
-from view.bandView import Ui_BandWindow
+from GenericMultiDimBaseController import *
+from view.Generic2dimView import Ui_Generic2dimWindow
 
 ##############################################################
 # Class: MainController
@@ -11,20 +11,20 @@ from view.bandView import Ui_BandWindow
 # Initial view, models and genereal setup is executed here
 #
 
-class BandController(EditBaseController):
+class Generic2dimController(GenericMultiDimBaseController):
 
 	def __init__(self, cData, parent=None):
-		super(BandController, self ).__init__(cData,Ui_BandWindow(),parent)
+		super(Generic2dimController, self ).__init__(cData,Ui_Generic2dimWindow(),parent)
 		self.configure_views()
 		parent.view.menubar = None
 
 	def configure_views(self):	
-		super(BandController,self).configure_views()
+		super(Generic2dimController,self).configure_views()
 		self.init2DView()
 
 
 	def init2DView(self):
-		super(BandController,self).init2DView()
+		super(Generic2dimController,self).init2DView()
 		self.DataPlot.plot2DData(self.cData.data, 
 				self.cData.axis1, 
 				self.cData.axis2, 
@@ -34,7 +34,7 @@ class BandController(EditBaseController):
 		self.view.dataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
 
 	def on_kSpaceCheckBoxChanged(self,val):
-		super(BandController,self).on_kSpaceCheckBoxChanged(val)
+		super(Generic2dimController,self).on_kSpaceCheckBoxChanged(val)
 		if self.cData.kdata == None and val == QtCore.Qt.Checked:
 			QtCore.QMetaObject.invokeMethod(self.mapWorker, 'makekMapFrom2D', QtCore.Qt.QueuedConnection)
 		elif not self.cData.kdata == None and val == QtCore.Qt.Checked:
@@ -43,11 +43,11 @@ class BandController(EditBaseController):
 			self.cData.setAngleSpace()
 
 	def on_mapWorkerDone(self,result):
-		super(BandController,self).on_mapWorkerDone(result)
+		super(Generic2dimController,self).on_mapWorkerDone(result)
 		self.cData.setkSpace()
 
 	def onP_dataChanged(self):
-		super(BandController,self).onP_dataChanged()
+		super(Generic2dimController,self).onP_dataChanged()
 		self.DataPlot.plot2DData(self.cData.data, 
 				self.cData.axis1, 
 				self.cData.axis2, 
