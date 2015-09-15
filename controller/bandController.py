@@ -31,7 +31,7 @@ class BandController(EditBaseController):
 				self.cData.axis1name, 
 				self.cData.axis2name)
 		self.setup2DTools()
-		self.view.dataView.setText(self.cData.root.tree)
+		self.view.dataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
 
 	def on_kSpaceCheckBoxChanged(self,val):
 		super(BandController,self).on_kSpaceCheckBoxChanged(val)

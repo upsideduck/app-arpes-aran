@@ -11,6 +11,7 @@ from controller.fermiController import *
 from controller.BuildController import *
 from nexpy.api import nexus as nx
 import numpy as np
+from copy import *
 #import n btreeview
 
 import matplotlib
@@ -20,6 +21,7 @@ import matplotlib.pyplot as plt
 #from pylab import *
 from view.matplotlibwidget import *
 from model.ArpesData import *
+from helper.SpectrumFile import *
 
 
 ##############################################################
@@ -53,7 +55,7 @@ class MainController(QtGui.QMainWindow):
 		layout = QtGui.QVBoxLayout(self.view.plotWidget)        
 		layout.addWidget(self.DataPlot)	
 
-		## Fo›lder View
+		## Folder View
 		# Setup folder model
 		self.dirmodel = QtGui.QFileSystemModel()
 		# Don't show files, just folders in folder view
@@ -72,7 +74,7 @@ class MainController(QtGui.QMainWindow):
 		# Setup file model
 		self.filemodel = QtGui.QFileSystemModel()
 		# Don't show folders, just files
-		self.filemodel.setNameFilters(["*.nxs"])
+		self.filemodel.setNameFilters(["*.nxs","*sp2"])
 		self.filemodel.setNameFilterDisables(False)
 		self.filemodel.setFilter(QtCore.QDir.NoDotAndDotDot | QtCore.QDir.Files)
 		self.view.fileView.setModel(self.filemodel)
@@ -89,7 +91,9 @@ class MainController(QtGui.QMainWindow):
 		## Tools
 		self.view.loadBtn.clicked.connect(self.on_loadBtnClicked)
 		self.view.buildBtn.clicked.connect(self.on_buildBtnClicked)
+		self.view.entriesBox.currentIndexChanged[int].connect(self.on_entriesBoxChanged)
 		
+
 	## Slots
 	def on_clicked_folderselected(self, index):
 		# Get selected path of folder view
@@ -99,19 +103,40 @@ class MainController(QtGui.QMainWindow):
 		self.view.fileView.setRootIndex(self.filemodel.index(dir_path))
 
 	def on_fileselected(self, selected, deselected):
+		if self.cData:
+			del self.cData
+
 		indexes = selected.indexes()
 		# Get selected path of file view
 		file_path = self.filemodel.filePath(indexes[0])
-		loadeddata = nx.load(file_path)
+		self.cData = SpectrumFile.load(file_path)
+		if self.cData == None:
+			return
+		self.updatePlot()
+		self.updateEntryBox()
+		self.view.dataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
+		self.view.loadBtn.setEnabled(True)
 
-		# Determine and set contrast values on dataplot
-		vmin_index = np.unravel_index(loadeddata.entry1.analyser.data.argmin(), loadeddata.entry1.analyser.data.shape)
-		vmin = int(loadeddata.entry1.analyser.data[vmin_index])
-		vmax_index = np.unravel_index(loadeddata.entry1.analyser.data.argmax(), loadeddata.entry1.analyser.data.shape)
-		vmax = int(loadeddata.entry1.analyser.data[vmax_index])
-	
-		self.cData = ArpesData(loadeddata)
+	def on_loadBtnClicked(self):
+		if len(self.cData.data.shape) == 2:
+			self.windows.append(BandController(copy(self.cData),self))
+			self.windows[-1].show()
+		elif len(self.cData.data.shape) == 3:
+			self.windows.append(FermiController(copy(self.cData),self))
+			self.windows[-1].show()
 
+	def on_buildBtnClicked(self):
+		self.windows.append(BuildController(self))
+		self.windows[-1].show()
+
+	def on_entriesBoxChanged(self,index):
+		newEntryId = self.view.entriesBox.itemData(index)
+		self.cData.entryId = newEntryId
+		self.view.dataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
+		self.updatePlot()
+
+	## Helper functions
+	def updatePlot(self):
 		if len(self.cData.data.shape) == 2:
 			self.DataPlot.plot2DData(self.cData.data, 
 				self.cData.axis1, 
@@ -124,21 +149,13 @@ class MainController(QtGui.QMainWindow):
 				self.cData.axis3, 
 				self.cData.axis2name, 
 				self.cData.axis3name)
-		
-		self.view.dataView.setText(self.cData.root.tree)
-		self.view.loadBtn.setEnabled(True)
 
-	def on_loadBtnClicked(self):
-		if len(self.cData.data.shape) == 2:
-			self.windows.append(BandController(self.cData,self))
-			self.windows[-1].show()
-		elif len(self.cData.data.shape) == 3:
-			self.windows.append(FermiController(self.cData,self))
-			self.windows[-1].show()
-
-	def on_buildBtnClicked(self):
-		self.windows.append(BuildController(self))
-		self.windows[-1].show()
+	def updateEntryBox(self):
+		self.view.entriesBox.currentIndexChanged[int].disconnect(self.on_entriesBoxChanged)
+		self.view.entriesBox.clear()
+		for i, m in enumerate(self.cData.root.entries):
+			self.view.entriesBox.addItem(m, i)
+		self.view.entriesBox.currentIndexChanged[int].connect(self.on_entriesBoxChanged)
 
 def main():
 	app = QtGui.QApplication(sys.argv)

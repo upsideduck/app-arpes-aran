@@ -6,22 +6,29 @@ from nexpy.api import nexus as nx
 import os
 import model.nexus_template as nxtemplate
 
+
+######################################
+##
+##	A @spectrum parses detector data
+##  into 
 class Spectrum:
 	nxEntry = None
 
-class Arpes2DSpectrum(Spectrum):
+	
+class Arpes2DSpectrumConverter(Spectrum):
 	
 	@classmethod
-	def parseSP2ToNx(self, inputfile, entryId = None ,rotation=None):
+	def SP2ToNx(self, inputfile, entryId = None ,rotation=None):
 		fh = open(inputfile)
 		lines = fh.readlines()
 		entryname = os.path.basename(inputfile).split('.')[0]
 		header = {}
 		wave = []
 		axes = []
-
+	
 		validFile = 0
 
+		print "---- Start: sp2->nexus ----"
 		print "Parsing: " + entryname
 
 		#Loop through and find header data
@@ -67,7 +74,7 @@ class Arpes2DSpectrum(Spectrum):
 		rowsC = int(dataDescriptors[1])
 		columnsC = int(dataDescriptors[0])
 		corrBuffer = lines[headerCount:rowsC*columnsC+headerCount]
-		correctedWave = Arpes2DSpectrum.__dataMatrix(corrBuffer,rowsC,columnsC)
+		correctedWave = Arpes2DSpectrumConverter.__dataMatrix(corrBuffer,rowsC,columnsC)
 
 		#Check if RAW data available, then load it
 		# if lines[rowsC*columnsC+headerCount].strip() == "P2":
@@ -114,6 +121,7 @@ class Arpes2DSpectrum(Spectrum):
 
 		print "Done with "+entryname
 		self.nxEntry = entry
+		print "---- End: sp2->nexus ------"
 		return self
 
 	@staticmethod
@@ -127,10 +135,10 @@ class Arpes2DSpectrum(Spectrum):
 		return wave
 
 
-class Arpes3DSpectrum(Spectrum):
+class Arpes3DSpectrumConverter(Spectrum):
 
 	@classmethod
-	def parseListOfEntriesToNx(self,listOfArpesEntries):
+	def listOfEntriesToNx(self,listOfArpesEntries):
 		nxEntry = nxtemplate.arpes('entry1')
 		data = nx.NXfield(np.array([]),name='data')
 		energies = nx.NXfield(units='eV',name='energies')
@@ -160,5 +168,5 @@ class Arpes3DSpectrum(Spectrum):
 		self.nxEntry = nxEntry
 		return self
 
-	def parseDA30Zip(self,pathZipFile):
+	def DA30ZipToNx(self,pathZipFile):
 		pass

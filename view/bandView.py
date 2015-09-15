@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/bandView.ui'
 #
-# Created: Fri Apr 24 14:45:30 2015
+# Created: Tue Aug 18 12:00:33 2015
 #      by: pyside-uic 0.2.14 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

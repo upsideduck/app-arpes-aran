@@ -19,7 +19,7 @@ class EditBaseController(QtGui.QMainWindow):
 		self.cData = cData		# Holds the data for the current open experiment
 		self.cData.dataChanged.connect(self.onP_dataChanged)
 		self.view.setupUi(self)
-		self.windowTitle = self.windowTitle() + " - " + str(self.cData.root.entry1.title)
+		self.windowTitle = self.windowTitle() + " - " + str(self.cData.title)
 		self.setWindowTitle(self.windowTitle)
 		
 

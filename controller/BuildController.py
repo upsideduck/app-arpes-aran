@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 #from pylab import *
 from view.matplotlibwidget import *
 import operator
-from helper.spectrum import Arpes2DSpectrum
-from helper.spectrum import Arpes3DSpectrum
+from helper.converter import Arpes2DSpectrumConverter
+from helper.converter import Arpes3DSpectrumConverter
+from helper.SpectrumFile import *
 from model.ArpesData import *
 
 
@@ -62,11 +63,6 @@ class BuildController(QtGui.QMainWindow):
 		if index.column() == 0:
 
 			loadeddata = nx.NXroot((self.table_model.entries[index.row()]).nxEntry)
-			# Determine and set contrast values on dataplot
-			# vmin_index = np.unravel_index(loadeddata.entry1.analyser.data.argmin(), loadeddata.entry1.analyser.data.shape)
-			# vmin = int(loadeddata.entry1.analyser.data[vmin_index])
-			# vmax_index = np.unravel_index(loadeddata.entry1.analyser.data.argmax(), loadeddata.entry1.analyser.data.shape)
-			# vmax = int(loadeddata.entry1.analyser.data[vmax_index])
 	
 			self.cData = ArpesData(loadeddata)
 
@@ -81,7 +77,7 @@ class BuildController(QtGui.QMainWindow):
 		files=QtGui.QFileDialog.getOpenFileNames(self,
 		                'Select one or more files to open',
 		                '/Users/johanadell/Box Sync/Dev/ARAN/src/data',
-		                'Spectra (*.sp2)')
+		                'Spectra (*.sp2 *.nxs)')
 
 		self.importFilesThread = QtCore.QThread()  # no parent!
 		self.filesWorker = ImportFilesWorker(files)
@@ -100,7 +96,7 @@ class BuildController(QtGui.QMainWindow):
 		if len(listOfEntries) > 0:
 			filename = QtGui.QFileDialog.getSaveFileName(self, "Save file", "", ".nxs")
 			if len(filename[0]) > 0:
-				fermiSurfaceEntry = Arpes3DSpectrum.parseListOfEntriesToNx(listOfEntries)
+				fermiSurfaceEntry = Arpes3DSpectrumConverter.listOfEntriesToNx(listOfEntries)
 				root = nx.NXroot(fermiSurfaceEntry.nxEntry)
 				root.save(filename[0]+filename[1])
 
@@ -112,8 +108,10 @@ class BuildController(QtGui.QMainWindow):
 
 		# Result is a touple with (progress in %, nxEntry of processed specturm)
 	def on_fileImported(self,result):	
-	    self.table_model.setData(QtCore.QModelIndex(),TableRowItem(nxEntry=result[1],wf=0))
-	    print "File imported, "+str(result[0]*100)+"% finished"
+		loadedData = result[1]
+		for entry in loadedData.root.NXentry:
+			self.table_model.setData(QtCore.QModelIndex(),TableRowItem(nxEntry=entry,wf=0))
+		print "File imported, "+str(result[0]*100)+"% finished"
 
 	def on_filesWorkerDone(self):
 		self.view.tableOfEntries.resizeColumnsToContents()
@@ -248,13 +246,18 @@ class ImportFilesWorker(QtCore.QObject):
 	def processFiles(self):
 		i = 0
 		for filepath in self.files[0]:
-			extension = filepath.split('.')[-1]
-			if extension == "sp2":
-				processedFile = self.processSp2File(filepath,i)
-				i += 1
-				self.progress.emit((float(i)/self.totalIter,processedFile.nxEntry))
-			else:
-				print "Not a valid file"
+			
+			loadedData = SpectrumFile.load(filepath)
+			i += 1
+			self.progress.emit((float(i)/self.totalIter,loadedData))
+		
+			# extension = filepath.split('.')[-1]
+			# if extension == "sp2":
+			# 	processedFile = self.processSp2File(filepath,i)
+			# 	i += 1
+			# 	self.progress.emit((float(i)/self.totalIter,processedFile.nxEntry))
+			# else:
+			# 	print "Not a valid file"
 		self.finished.emit()
 
 
@@ -263,7 +266,7 @@ class ImportFilesWorker(QtCore.QObject):
 		entry = None
 		root = None
 		entryid = "entry"+str(iteration)
-		arpes2DSpectrum = Arpes2DSpectrum.parseSP2ToNx(filepath,rotation=float(0.0))
+		arpes2DSpectrum = Arpes2DSpectrumConverter.SP2ToNx(filepath,rotation=float(0.0))
 		print "-----------------------------------"
 		return arpes2DSpectrum
 

@@ -2,8 +2,6 @@ from GenericData import *
 
 class ArpesData(GenericData):
 
-	# Original data
-	root = None
 	# k-space data
 	kdata = None
 	krotation = None
@@ -19,22 +17,26 @@ class ArpesData(GenericData):
 	vmax = 1
 	thread = None
 	createMapWorker = None
+	dataType = CONST_DATATYPE_ARPES
 
-	def __init__(self, nxRoot):
-		super(ArpesData, self).__init__(nxRoot)
-		self.root = nxRoot
-		self.adata = self.root.entry1.analyser.data
-		self.E = self.root.entry1.analyser.energies
-		self.a = self.root.entry1.analyser.angles
+	def __init__(self, nxRoot, entryId = 0):
+		super(ArpesData, self).__init__(nxRoot, entryId)
+		self.reinitializeData()
+
+	def reinitializeData(self):
+		super(ArpesData, self).reinitializeData()
+		self.adata = self.root.NXentry[self.entryId].analyser.data
+		self.E = self.root.NXentry[self.entryId].analyser.energies
+		self.a = self.root.NXentry[self.entryId].analyser.angles
 		if len(self.adata.shape) == 3:
-			self.arotation = self.root.entry1.analyser.rangles
+			self.arotation = self.root.NXentry[self.entryId].analyser.rangles
 		else:
 			self.arotation = None
 
-		vmin_index = np.unravel_index(nxRoot.entry1.analyser.data.argmin(), nxRoot.entry1.analyser.data.shape)
-		self.vmin = int(nxRoot.entry1.analyser.data[vmin_index])
-		vmax_index = np.unravel_index(nxRoot.entry1.analyser.data.argmax(), nxRoot.entry1.analyser.data.shape)
-		self.vmax = int(nxRoot.entry1.analyser.data[vmax_index])
+		vmin_index = np.unravel_index(self.root.NXentry[self.entryId].analyser.data.argmin(), self.root.NXentry[self.entryId].analyser.data.shape)
+		self.vmin = int(self.root.NXentry[self.entryId].analyser.data[vmin_index])
+		vmax_index = np.unravel_index(self.root.NXentry[self.entryId].analyser.data.argmax(), self.root.NXentry[self.entryId].analyser.data.shape)
+		self.vmax = int(self.root.NXentry[self.entryId].analyser.data[vmax_index])
 		self.setAngleSpace()
 
 	def setAngleSpace(self):
@@ -47,7 +49,7 @@ class ArpesData(GenericData):
 		self.axis1name = CONST_ZAXIS_AVSPA
 		self.axis2name = CONST_ZAXIS_EVSPA
 		self.axis3name = CONST_ZAXIS_EVSA
-		self.title = self.root.entry1.title
+		self.title = self.root.NXentry[self.entryId].title
 		self.data = self.adata		# Last since it will emit updated data signal
 
 	def setkSpace(self):
@@ -60,7 +62,7 @@ class ArpesData(GenericData):
 		self.axis1ame = CONST_ZAXIS_AVSPA
 		self.axis2name = CONST_ZAXIS_EVSkPA
 		self.axis3name = CONST_ZAXIS_EVSkA
-		self.title = self.root.entry1.title
+		self.title = self.root.NXentry[self.entryId].title
 		self.data = self.kdata 			# Last since it will emit updated data signal
 
 
@@ -77,11 +79,11 @@ class MakeMapWorker(QtCore.QObject):
 
  	def __init__(self,root):
  		super(MakeMapWorker, self).__init__()
- 		self.energy = root.entry1.analyser.energies
- 		self.angle = root.entry1.analyser.angles
- 		self.data = root.entry1.analyser.data
- 		if len(root.entry1.analyser.data.shape) == 3:
- 			self.pangle = root.entry1.analyser.rangles
+ 		self.energy = root.NXentry[self.entryId].analyser.energies
+ 		self.angle = root.NXentry[self.entryId].analyser.angles
+ 		self.data = root.NXentry[self.entryId].analyser.data
+ 		if len(root.NXentry[self.entryId].analyser.data.shape) == 3:
+ 			self.pangle = root.NXentry[self.entryId].analyser.rangles
 		
 	@QtCore.Slot()
 	def makekMapFrom2D(self):

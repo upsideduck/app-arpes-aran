@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/mainView.ui'
 #
-# Created: Fri Apr 24 14:45:30 2015
+# Created: Tue Aug 18 12:00:33 2015
 #      by: pyside-uic 0.2.14 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1479, 879)
+        MainWindow.resize(1714, 985)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
@@ -76,19 +76,32 @@ class Ui_MainWindow(object):
         self.plotTools.addTab(self.d3tab, "")
         self.verticalLayout.addWidget(self.plotTools)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.dataView = QtGui.QTextEdit(self.centralwidget)
+        self.widget_2 = QtGui.QWidget(self.centralwidget)
+        self.widget_2.setMinimumSize(QtCore.QSize(300, 0))
+        self.widget_2.setMaximumSize(QtCore.QSize(300, 16777215))
+        self.widget_2.setObjectName("widget_2")
+        self.verticalLayout_3 = QtGui.QVBoxLayout(self.widget_2)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setObjectName("verticalLayout_3")
+        self.entriesBox = QtGui.QComboBox(self.widget_2)
+        self.entriesBox.setMinimumSize(QtCore.QSize(0, 0))
+        self.entriesBox.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.entriesBox.setObjectName("entriesBox")
+        self.verticalLayout_3.addWidget(self.entriesBox)
+        self.dataView = QtGui.QTextEdit(self.widget_2)
         self.dataView.setEnabled(False)
-        self.dataView.setMinimumSize(QtCore.QSize(300, 0))
-        self.dataView.setMaximumSize(QtCore.QSize(300, 16777215))
+        self.dataView.setMinimumSize(QtCore.QSize(0, 0))
+        self.dataView.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.dataView.setObjectName("dataView")
-        self.horizontalLayout.addWidget(self.dataView)
+        self.verticalLayout_3.addWidget(self.dataView)
+        self.horizontalLayout.addWidget(self.widget_2)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusBar = QtGui.QStatusBar(MainWindow)
         self.statusBar.setObjectName("statusBar")
         MainWindow.setStatusBar(self.statusBar)
         self.menubar = QtGui.QMenuBar()
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1479, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1714, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
 
