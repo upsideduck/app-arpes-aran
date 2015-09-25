@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/ArpesBuildView.ui'
 #
-# Created: Tue Sep 15 13:41:54 2015
+# Created: Fri Sep 25 10:44:46 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

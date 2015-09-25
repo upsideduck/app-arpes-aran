@@ -10,7 +10,7 @@ class SpectrumFile:
 		extension = filepath.split('.')[-1]
 		if extension == "nxs":
 			try:
-				loadeddata = nx.load(filepath)
+				loadeddata = nx.load(filepath,'r')
 				## Check if data is ARPES, right now just load!
 				if len(loadeddata.entries) != 1:		# How many entries do we have in the nexus file
 					data = ArpesData(loadeddata, 0)		# Right now, just load the first one

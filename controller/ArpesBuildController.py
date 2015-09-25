@@ -180,7 +180,7 @@ class TableOfEntriesModel(QtCore.QAbstractTableModel):
 	            	self.entries[index.row()].nxEntry.instrument.manipulator.rangle = float(value) 
 
 	        self.emit(QtCore.SIGNAL("dataChanged(QModelIndex, QModelIndex)"), index, index)
-             self.emit(QtCore.SIGNAL("layoutChanged()"))
+            self.emit(QtCore.SIGNAL("layoutChanged()"))
 
             return True
         return False

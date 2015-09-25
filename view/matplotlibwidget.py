@@ -88,7 +88,7 @@ class MatplotlibWidget(FigureCanvas):
 		self.__updatePlot()
 
 	def __updatePlot(self):
-		if self.data == None:
+		if self.data is None:
 			return
 		axises = [float(self.axis1[0]),float(self.axis1[-1]),float(self.axis2[0]),float(self.axis2[-1])]
 		self.axes.clear()
