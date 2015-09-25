@@ -18,9 +18,10 @@ except:
 
 class Generic3dimController(GenericMultiDimBaseController):
 
-	def __init__(self, cData, parent=None):
-		super(Generic3dimController, self ).__init__(cData,Ui_Generic3dimWindow(),parent)
-		self.configure_views()
+	def __init__(self, cData, view=None, parent=None):
+		if view == None:
+			view = Ui_Generic3dimWindow()
+		super(Generic3dimController, self ).__init__(cData,view,parent)
 
 	def configure_views(self):	
 		super(Generic3dimController,self).configure_views()
@@ -89,20 +90,6 @@ class Generic3dimController(GenericMultiDimBaseController):
 		else:
 			print "??"
 
-
-	## Slots
-	def on_kSpaceCheckBoxChanged(self,val):
-		super(Generic3dimController,self).on_kSpaceCheckBoxChanged(val)
-		if self.cData.kdata == None and val == QtCore.Qt.Checked:
-			QtCore.QMetaObject.invokeMethod(self.mapWorker, 'makekMapFrom3D', QtCore.Qt.QueuedConnection)
-		elif not self.cData.kdata == None and val == QtCore.Qt.Checked:
-			self.cData.setkSpace()
-		elif val == QtCore.Qt.Unchecked:
-			self.cData.setAngleSpace()
-
-	def on_mapWorkerDone(self,result):
-		super(Generic3dimController,self).on_mapWorkerDone(result)
-		self.cData.setkSpace()
 
 	def on_d3SliderMoved(self, val):
 		index = self.view.d3PlotChooser.currentIndex()

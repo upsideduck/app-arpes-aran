@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/Generic3dimView.ui'
 #
-# Created: Tue Sep 15 13:41:54 2015
+# Created: Fri Sep 25 10:44:46 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -20,8 +20,6 @@ class Ui_Generic3dimWindow(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setSpacing(-1)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.verticalLayout = QtGui.QVBoxLayout()
-        self.verticalLayout.setObjectName("verticalLayout")
         self.gridLayout_2 = QtGui.QGridLayout()
         self.gridLayout_2.setObjectName("gridLayout_2")
         self.horizontalSlider = QtGui.QSlider(self.centralwidget)
@@ -42,7 +40,6 @@ class Ui_Generic3dimWindow(object):
         self.verticalSlider.setOrientation(QtCore.Qt.Vertical)
         self.verticalSlider.setObjectName("verticalSlider")
         self.gridLayout_2.addWidget(self.verticalSlider, 0, 1, 1, 1)
-        self.verticalLayout.addLayout(self.gridLayout_2)
         self.plotTools = QtGui.QTabWidget(self.centralwidget)
         self.plotTools.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -57,6 +54,10 @@ class Ui_Generic3dimWindow(object):
         self.d3tab.setObjectName("d3tab")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.d3tab)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.toolsHorizontalLayout = QtGui.QHBoxLayout()
+        self.toolsHorizontalLayout.setObjectName("toolsHorizontalLayout")
+        self.verticalLayout_2 = QtGui.QVBoxLayout()
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.tools3D = QtGui.QWidget(self.d3tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -101,7 +102,7 @@ class Ui_Generic3dimWindow(object):
         self.horizontalLayout_5.addItem(spacerItem)
         self.verticalLayout_8.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_6.addLayout(self.verticalLayout_8)
-        self.verticalLayout_4.addWidget(self.tools3D)
+        self.verticalLayout_2.addWidget(self.tools3D)
         self.tools2D = QtGui.QWidget(self.d3tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -152,11 +153,8 @@ class Ui_Generic3dimWindow(object):
         self.horizontalLayout_4.addWidget(self.yCoordinate)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem2)
-        self.kSpaceCheckBox = QtGui.QCheckBox(self.tools2D)
-        self.kSpaceCheckBox.setObjectName("kSpaceCheckBox")
-        self.horizontalLayout_4.addWidget(self.kSpaceCheckBox)
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
-        self.verticalLayout_4.addWidget(self.tools2D)
+        self.verticalLayout_2.addWidget(self.tools2D)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.checkAutoScale = QtGui.QCheckBox(self.d3tab)
@@ -183,11 +181,16 @@ class Ui_Generic3dimWindow(object):
         self.label_2 = QtGui.QLabel(self.d3tab)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.toolsHorizontalLayout.addLayout(self.verticalLayout_2)
+        self.verticalLayout_4.addLayout(self.toolsHorizontalLayout)
         spacerItem3 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_4.addItem(spacerItem3)
         self.plotTools.addTab(self.d3tab, "")
-        self.verticalLayout.addWidget(self.plotTools)
+        self.gridLayout_2.addWidget(self.plotTools, 2, 0, 1, 1)
+        self.horizontalLayout.addLayout(self.gridLayout_2)
+        self.verticalLayout = QtGui.QVBoxLayout()
+        self.verticalLayout.setObjectName("verticalLayout")
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.dataView = QtGui.QTextEdit(self.centralwidget)
         self.dataView.setEnabled(False)
@@ -210,12 +213,11 @@ class Ui_Generic3dimWindow(object):
         QtCore.QMetaObject.connectSlotsByName(Generic3dimWindow)
 
     def retranslateUi(self, Generic3dimWindow):
-        Generic3dimWindow.setWindowTitle(QtGui.QApplication.translate("Generic3dimWindow", "ARAN 3D Viewer", None, QtGui.QApplication.UnicodeUTF8))
+        Generic3dimWindow.setWindowTitle(QtGui.QApplication.translate("Generic3dimWindow", "3D Viewer", None, QtGui.QApplication.UnicodeUTF8))
         self.open3DDisplay.setText(QtGui.QApplication.translate("Generic3dimWindow", "3D Display", None, QtGui.QApplication.UnicodeUTF8))
         self.zaxisNameLbl.setText(QtGui.QApplication.translate("Generic3dimWindow", "Energy:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Generic3dimWindow", "Interpolation", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Generic3dimWindow", "Color space", None, QtGui.QApplication.UnicodeUTF8))
-        self.kSpaceCheckBox.setText(QtGui.QApplication.translate("Generic3dimWindow", "k-space", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAutoScale.setText(QtGui.QApplication.translate("Generic3dimWindow", "Auto scale", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Generic3dimWindow", "Offset", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Generic3dimWindow", "Max", None, QtGui.QApplication.UnicodeUTF8))

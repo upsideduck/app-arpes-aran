@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/Generic2dimView.ui'
 #
-# Created: Tue Sep 15 13:41:54 2015
+# Created: Fri Sep 25 10:44:46 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,11 +12,11 @@ from PySide import QtCore, QtGui
 class Ui_Generic2dimWindow(object):
     def setupUi(self, Generic2dimWindow):
         Generic2dimWindow.setObjectName("Generic2dimWindow")
-        Generic2dimWindow.resize(1400, 862)
+        Generic2dimWindow.resize(1400, 884)
         self.centralwidget = QtGui.QWidget(Generic2dimWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setSpacing(-1)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -57,6 +57,10 @@ class Ui_Generic2dimWindow(object):
         self.d3tab.setObjectName("d3tab")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.d3tab)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.toolsHorizontalLayout = QtGui.QHBoxLayout()
+        self.toolsHorizontalLayout.setObjectName("toolsHorizontalLayout")
+        self.verticalLayout_5 = QtGui.QVBoxLayout()
+        self.verticalLayout_5.setObjectName("verticalLayout_5")
         self.tools2D = QtGui.QWidget(self.d3tab)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -107,12 +111,8 @@ class Ui_Generic2dimWindow(object):
         self.horizontalLayout_4.addWidget(self.yCoordinate)
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
-        self.kSpaceCheckBox = QtGui.QCheckBox(self.tools2D)
-        self.kSpaceCheckBox.setEnabled(True)
-        self.kSpaceCheckBox.setObjectName("kSpaceCheckBox")
-        self.horizontalLayout_4.addWidget(self.kSpaceCheckBox)
         self.verticalLayout_6.addLayout(self.horizontalLayout_4)
-        self.verticalLayout_4.addWidget(self.tools2D)
+        self.verticalLayout_5.addWidget(self.tools2D)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.checkAutoScale = QtGui.QCheckBox(self.d3tab)
@@ -139,7 +139,9 @@ class Ui_Generic2dimWindow(object):
         self.label_2 = QtGui.QLabel(self.d3tab)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
-        self.verticalLayout_4.addLayout(self.horizontalLayout_2)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_2)
+        self.toolsHorizontalLayout.addLayout(self.verticalLayout_5)
+        self.verticalLayout_4.addLayout(self.toolsHorizontalLayout)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_4.addItem(spacerItem2)
         self.plotTools.addTab(self.d3tab, "")
@@ -152,7 +154,7 @@ class Ui_Generic2dimWindow(object):
         self.dataView.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.dataView.setObjectName("dataView")
         self.horizontalLayout.addWidget(self.dataView)
-        self.gridLayout.addLayout(self.horizontalLayout, 1, 0, 1, 1)
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
         Generic2dimWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar()
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1400, 22))
@@ -167,10 +169,9 @@ class Ui_Generic2dimWindow(object):
         QtCore.QMetaObject.connectSlotsByName(Generic2dimWindow)
 
     def retranslateUi(self, Generic2dimWindow):
-        Generic2dimWindow.setWindowTitle(QtGui.QApplication.translate("Generic2dimWindow", "ARAN 2D Viewer", None, QtGui.QApplication.UnicodeUTF8))
+        Generic2dimWindow.setWindowTitle(QtGui.QApplication.translate("Generic2dimWindow", "2D Viewer", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Generic2dimWindow", "Interpolation", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Generic2dimWindow", "Color space", None, QtGui.QApplication.UnicodeUTF8))
-        self.kSpaceCheckBox.setText(QtGui.QApplication.translate("Generic2dimWindow", "k-space", None, QtGui.QApplication.UnicodeUTF8))
         self.checkAutoScale.setText(QtGui.QApplication.translate("Generic2dimWindow", "Auto scale", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Generic2dimWindow", "Offset", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("Generic2dimWindow", "Max", None, QtGui.QApplication.UnicodeUTF8))

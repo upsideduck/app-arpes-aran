@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 #from pylab import *
 import view.matplotlibwidget as matplotlibwidget
 
-
 class GenericMultiDimBaseController(QtGui.QMainWindow):
 	
 	def __init__(self, cData, view, parent=None):
@@ -20,9 +19,10 @@ class GenericMultiDimBaseController(QtGui.QMainWindow):
 		self.view.setupUi(self)
 		self.windowTitle = self.windowTitle() + " - " + str(self.cData.title)
 		self.setWindowTitle(self.windowTitle)
+		self.configure_views()
 		
 
-	def configure_views(self):	
+	def configure_views(self):				
 		## Matplotlib widget
 		# Do this first to be ready with default values
  		self.DataPlot = matplotlibwidget.MatplotlibWidget(self.view)
@@ -54,9 +54,7 @@ class GenericMultiDimBaseController(QtGui.QMainWindow):
 		# Horizontal and vertical cut sliders
 		self.view.horizontalSlider.valueChanged[int].connect(self.on_horiSliderMoved)
 		self.view.verticalSlider.valueChanged[int].connect(self.on_vertSliderMoved)
-		# k-space
-		self.view.kSpaceCheckBox.stateChanged[int].connect(self.on_kSpaceCheckBoxChanged)
-	
+		
 
 	def init2DView(self):
 		self.view.plotTools.setEnabled(True)
@@ -103,7 +101,6 @@ class GenericMultiDimBaseController(QtGui.QMainWindow):
 	
 	## Slots
 	def on_checkAutoScaleChanged(self,val):
-		self.cData.axis1[0] =  self.cData.axis1[0] -1
 		if val == QtCore.Qt.Checked:
 			self.view.voffsetslider.setEnabled(False)
 			self.view.vmaxslider.setEnabled(False)
@@ -113,34 +110,7 @@ class GenericMultiDimBaseController(QtGui.QMainWindow):
 			self.view.vmaxslider.setEnabled(True)
 			self.DataPlot.setAutoscale(False)
 
-	def on_kSpaceCheckBoxChanged(self,val):
-		if val == QtCore.Qt.Checked and self.cData.kdata == None:
-			self.mapCreationThread = QtCore.QThread()  # no parent!
-			self.mapWorker = MakeMapWorker(self.cData.root)
-			self.mapWorker.moveToThread(self.mapCreationThread)
-			self.mapWorker.finished.connect(self.mapCreationThread.quit)
-			self.mapWorker.progress.connect(self.on_mapWorkerUpdateProgress)
-			self.mapWorker.finished.connect(self.on_mapWorkerDone)	
-			self.mapCreationThread.start()
-			self.view.kSpaceCheckBox.setEnabled(False)
-			#self.progresslabel = QtGui.QLabel()
-			#self.view.statusBar.addWidget(self.progresslabel)
-
-	#@QtCore.Slot(tuple)
-	def on_mapWorkerDone(self, result):
-		self.cData.k = result[0]
-		self.cData.krotation = result[1]
-		self.cData.kdata = result[2]
-		self.mapWorker.finished.disconnect(self.mapCreationThread.quit)
-		self.mapWorker.progress.disconnect(self.on_mapWorkerUpdateProgress)
-		self.mapWorker.finished.disconnect(self.on_mapWorkerDone)	
-		self.mapCreationThread = None
-		self.mapWorker = None
-		self.view.kSpaceCheckBox.setEnabled(True)
-
-	#@QtCore.Slot(float)
-	def on_mapWorkerUpdateProgress(self, result):
-		self.view.statusBar.showMessage("Calculating k-map: "+str(int(result*100))+"% done",2000)
+	## SLOTS
 	
 	def on_interpolationChooserChanged(self,index):
 		self.DataPlot.setInterpolation(self.DataPlot.interpolationMethods[int(index)])
