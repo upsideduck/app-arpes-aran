@@ -76,6 +76,7 @@ class MakeMapWorker(QtCore.QObject):
  	pangle = None
  	data = None
 
+ 	entryId = 0
 
  	def __init__(self,root):
  		super(MakeMapWorker, self).__init__()
