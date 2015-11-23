@@ -40,15 +40,21 @@ class ArpesData(GenericData):
 		self.setAngleSpace()
 
 	def setAngleSpace(self):
-		self.axis1 = self.E
-		self.axis2 = self.a
-		if len(self.adata.shape) == 3:
-			self.axis3 = self.arotation
-		else:
+		if len(self.adata.shape) == 2:
+			self.axis1 = self.a
+			self.axis2 = self.E
 			self.axis3 = None
-		self.axis1name = CONST_ZAXIS_AVSPA
-		self.axis2name = CONST_ZAXIS_EVSPA
-		self.axis3name = CONST_ZAXIS_EVSA
+			self.axis1name = CONST_ZAXIS_EVSPA
+			self.axis2name = CONST_ZAXIS_AVSPA
+			self.axis3name = None
+		elif len(self.adata.shape) == 3:
+			self.axis1 = self.arotation
+			self.axis2 = self.a
+			self.axis3 = self.E
+			self.axis1name = CONST_ZAXIS_EVSA
+			self.axis2name = CONST_ZAXIS_EVSPA
+			self.axis3name = CONST_ZAXIS_AVSPA
+		
 		self.title = self.root.NXentry[self.entryId].title
 		self.data = self.adata		# Last since it will emit updated data signal
 

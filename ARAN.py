@@ -4,14 +4,13 @@ from helper.constants import *
 import sys
 from PySide import QtCore, QtGui 
 from view.mainView import Ui_MainWindow
-from controller.Generic2dimController import *
-from controller.Generic3dimController import *
 from controller.ArpesBuildController import *
-from controller.Arpes2dimController import *
-from controller.Arpes3dimController import *
+from controller.GenericPQGController import *
+from controller.ARPESPQGController import *
 from nexpy.api import nexus as nx
 import numpy as np
 from copy import *
+import pdb
 
 import matplotlib
 matplotlib.use('Qt4Agg')
@@ -104,6 +103,7 @@ class MainController(QtGui.QMainWindow):
 		if self.cData:
 			del self.cData
 
+
 		indexes = selected.indexes()
 		# Get selected path of file view
 		file_path = self.filemodel.filePath(indexes[0])
@@ -116,22 +116,15 @@ class MainController(QtGui.QMainWindow):
 		self.view.loadBtn.setEnabled(True)
 
 	def on_loadBtnClicked(self):
-		if len(self.cData.data.shape) == 2:
-			if isinstance(self.cData, ArpesData):
-				self.windows.append(Arpes2dimController(copy(self.cData),parent=self))
-			elif isinstance(self.cData, GenericData):
-				self.windows.append(Generic2dimController(copy(self.cData),parent=self))
-			else:
-				print "Error: Do not recognize the data format"
-			self.windows[-1].show()
-		elif len(self.cData.data.shape) == 3:
-			if isinstance(self.cData, ArpesData):
-				self.windows.append(Arpes3dimController(copy(self.cData),parent=self))
-			elif isinstance(self.cData, GenericData):
-				self.windows.append(Generic3dimController(copy(self.cData),parent=self))
-			else:
-				print "Error: Do not recognize the data format"
-			self.windows[-1].show()
+		if isinstance(self.cData, ArpesData):	
+			self.windows.append(ARPESPQGController(copy(self.cData),parent=self))
+		elif isinstance(self.cData, GenericData):
+			self.windows.append(GenericPQGController(copy(self.cData),parent=self))
+		else:
+			print "Error: Do not recognize the data format"
+		self.windows[-1].show()
+		
+
 
 	def on_buildBtnClicked(self):
 		self.windows.append(ArpesBuildController(self))
