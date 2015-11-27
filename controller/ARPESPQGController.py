@@ -5,6 +5,7 @@ import numpy as np
 from view.GenericPQGView import Ui_GenericPQGView
 from view.pyqtgraphwidget import *
 from view.CustomWidgets import Tools_ROIWidget
+from view.CustomWidgets import Tools_RotationWidget
 
 class ARPESPQGController(QtGui.QWidget):
 
@@ -21,11 +22,11 @@ class ARPESPQGController(QtGui.QWidget):
 		self.plotWidget = standardPlot()
 		self.view.hLayout.addWidget(self.plotWidget)
 
-		tools = Tools_ROIWidget(self)
-		self.view.toolsLayout.addWidget(tools)
+		roiTools = Tools_ROIWidget(self)
+		rotationTools = Tools_RotationWidget(self)
+		self.view.toolsLayout.addWidget(roiTools)
+		self.view.toolsLayout.addWidget(rotationTools)
 		self.plotWidget.setData(self.cData, metaDataOutput=self.view.dataView)
-
-
 
 
 	## ROI tools slots
@@ -46,3 +47,7 @@ class ARPESPQGController(QtGui.QWidget):
 
 	def on_btnRemBoxRoi(self):
 		self.plotWidget.remBoxRoi()
+
+	## Rotation tools slots
+	def on_changeAngle(self, val):
+		self.plotWidget.setRotationAngle(val)

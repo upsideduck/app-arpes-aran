@@ -5,18 +5,46 @@ import ext.pyqtgraph as pg
 
 class standardPlot(QtGui.QWidget):
 
-	cData = None
-	levelMin = 0
-	levelMax = 4000
-	autoLevel = True
-	nameAxisZ = ""
-	roiList = [[],[],[]]
+	__angle=0
+
+	# Setters and Getters
+	# Angle property
+	def getAngle(self):
+		return self.__angle
+
+	def setAngle(self, d):
+		if self.__angle == 0 and d != 0:
+			self.mainPlotItem.getAxis('bottom').setStyle(showValues=False)
+			self.mainPlotItem.getAxis('left').setStyle(showValues=False)
+			self.ROIPlotItemBottomWidget.getAxis('bottom').setStyle(showValues=False)
+			self.ROIPlotItemRightWidget.getAxis('left').setStyle(showValues=False)
+		if d == 0:
+			self.mainPlotItem.getAxis('bottom').setStyle(showValues=True)
+			self.mainPlotItem.getAxis('left').setStyle(showValues=True)
+			self.ROIPlotItemBottomWidget.getAxis('bottom').setStyle(showValues=True)
+			self.ROIPlotItemRightWidget.getAxis('left').setStyle(showValues=True)
+
+		self.__angle = d
+		
+	def delAngle(self):
+		del self.__angle
+
+
+	angle = property(getAngle,setAngle,delAngle)
 
 	def __init__(self, parent = None):
 		super(standardPlot, self).__init__()
-		self.initUI()
+		
 		self.currentIndex = 0
 		self.zAxis = None
+		self.cData = None
+		self.levelMin = 0
+		self.levelMax = 4000
+		self.autoLevel = True
+		self.nameAxisZ = ""
+		self.roiList = [[],[],[]]
+
+		self.initUI()
 
 
 	def initUI(self):
@@ -42,12 +70,12 @@ class standardPlot(QtGui.QWidget):
 		self.hist.setMaximumWidth(80)
 
 		# Setup ROI
-		self.ROIPlotItemRightWidget.setMaximumWidth(150)
-		self.ROIPlotItemRightWidget.setMinimumWidth(150)
+		self.ROIPlotItemRightWidget.setMaximumWidth(100)
+		self.ROIPlotItemRightWidget.setMinimumWidth(100)
 		self.ROIPlotItemRightWidget.hide()
 		grid.addWidget(self.ROIPlotItemRightWidget,0,1)
-		self.ROIPlotItemBottomWidget.setMaximumHeight(150)
-		self.ROIPlotItemBottomWidget.setMinimumHeight(150)
+		self.ROIPlotItemBottomWidget.setMaximumHeight(100)
+		self.ROIPlotItemBottomWidget.setMinimumHeight(100)
 		self.ROIPlotItemBottomWidget.hide()
 		grid.addWidget(self.ROIPlotItemBottomWidget, 1, 0)
 		
@@ -58,8 +86,6 @@ class standardPlot(QtGui.QWidget):
 		self.mainPlotItem.addItem(self.image)
 		grid.setColumnStretch(0,10)
 		grid.setRowStretch(0,10)
-
-		
 
 		
 	def setData(self, cData, zAxis=None, metaDataOutput=None):
@@ -78,8 +104,9 @@ class standardPlot(QtGui.QWidget):
 
 		self.updateImage()
 
-		self.image.scale(self.scaleAxisHorizontal,self.scaleAxisVertical)
-		self.image.setPos(self.posOrigoAxisHorizontal,self.posOrigoAxisVertical)
+		self.updateImageTransform()
+		#self.image.scale(self.scaleAxisHorizontal,self.scaleAxisVertical)
+		#self.image.setPos(self.posOrigoAxisHorizontal,self.posOrigoAxisVertical)
 		self.mainPlotItem.setLabel('bottom',text=self.nameAxisHorizontal)
 		self.mainPlotItem.setLabel('left',text=self.nameAxisVertical)
 		self.ROIPlotItemRight.setLabel('bottom', text="I")
@@ -123,7 +150,7 @@ class standardPlot(QtGui.QWidget):
 			return 
 
 		image = self.getProcessedImage()
-
+	
 		self.image.updateImage(image)
 
 		if self.autoLevel:
@@ -142,26 +169,29 @@ class standardPlot(QtGui.QWidget):
 	#
 	#
 	#
-	def addInfiniteLineROI(self,angle,plot):
+	def addSingleLineROI(self,plot):
+		centerPoint = self.centerPoint()
 		if plot == self.ROIPlotItemBottomWidget:
-			initPos = (self.posOrigoAxisVertical + self.lengthAxisVertical*self.scaleAxisVertical/2)
+			initPos = ([self.posOrigoAxisHorizontal,centerPoint[1]],[self.posOrigoAxisHorizontal+self.lengthAxisHorizontal*self.scaleAxisHorizontal,centerPoint[1]])
 			bounds = [self.posOrigoAxisVertical,self.posOrigoAxisVertical+self.lengthAxisVertical*self.scaleAxisVertical]
 			roiListID = CONST_ROI_HOR_LIST
 			updatePlot = self.on_updateHorRoiPlot
 		elif plot == self.ROIPlotItemRightWidget:
-			initPos = (self.posOrigoAxisHorizontal + self.lengthAxisHorizontal*self.scaleAxisHorizontal/2)
 			bounds = [self.posOrigoAxisHorizontal,self.posOrigoAxisHorizontal+self.lengthAxisHorizontal*self.scaleAxisHorizontal]
+			#initPos=([self.posOrigoAxisVertical,centerPoint[0]],[self.posOrigoAxisVertical+self.lengthAxisVertical*self.scaleAxisVertical,centerPoint[0]])
+			initPos=([centerPoint[0],self.posOrigoAxisVertical],[centerPoint[0],self.posOrigoAxisVertical+self.lengthAxisVertical*self.scaleAxisVertical])
 			roiListID = CONST_ROI_VER_LIST
 			updatePlot = self.on_updateVerRoiPlot
 		else:
 			return
 
-		roi = pg.InfiniteLine(angle=angle, movable=True, pos=initPos, bounds=bounds)
+		angle = 0
+		roi = SingleLineROI(positions=initPos, scaleCenter=centerPoint)
 		roi.setPen(QtGui.QPen(QtGui.QColor(255, 255, 0, 200)))
 		roi.setZValue(1)
 		self.roiList[roiListID].append(roi)
 		self.mainPlotItem.addItem(roi)
-		roi.sigPositionChanged.connect(updatePlot)
+		roi.sigRegionChanged.connect(updatePlot)
 		plot.show()
 		updatePlot()
 
@@ -181,8 +211,8 @@ class standardPlot(QtGui.QWidget):
 
 	def removeROI(self,roi):
 		if roi in self.roiList[CONST_ROI_HOR_LIST]:
-			if type(roi) is pg.InfiniteLine:
-				roi.sigPositionChanged.disconnect()
+			if type(roi) is SingleLineROI:
+				roi.sigRegionChanged.disconnect()
 			else:
 				print "Could not remove ROI plot"
 				return 
@@ -192,8 +222,8 @@ class standardPlot(QtGui.QWidget):
 			self.on_updateHorRoiPlot()
 
 		if roi in self.roiList[CONST_ROI_VER_LIST]:
-			if type(roi) is pg.InfiniteLine:
-				roi.sigPositionChanged.disconnect()
+			if type(roi) is SingleLineROI:
+				roi.sigRegionChanged.disconnect()
 			else:
 				print "Could not remove ROI plot"
 				return 
@@ -220,15 +250,21 @@ class standardPlot(QtGui.QWidget):
 			self.ROIPlotItemRightWidget.hide()
 		
 	# Slots
+	# 
+	#
+
+
 	def on_updateHorRoiPlot(self):
 		self.ROIPlotItemBottom.clear()
 		for roi in self.roiList[CONST_ROI_HOR_LIST]:
-			if type(roi) is pg.InfiniteLine: 
-				idx = int((roi.value()-self.posOrigoAxisVertical)/self.scaleAxisVertical)
-				if idx >= self.lengthAxisVertical or idx < 0:
-					return
-				y = np.asarray(self.getProcessedImage()[:,idx])
-				x = np.linspace(self.posOrigoAxisHorizontal,self.posOrigoAxisHorizontal+self.lengthAxisHorizontal*self.scaleAxisHorizontal,self.lengthAxisHorizontal)
+			if type(roi) is SingleLineROI: 
+				pos = roi.pos()
+				size = roi.size()
+
+				xStart = self.posOrigoAxisHorizontal+pos[0]+(1-size[0])*self.lengthAxisHorizontal*self.scaleAxisHorizontal/2
+				xEnd = xStart+self.lengthAxisHorizontal*self.scaleAxisHorizontal*size[0]
+				y = roi.getArrayRegion(np.asarray(self.getProcessedImage()), self.image, axes=(0,1))
+				x = np.linspace(xStart,xEnd,len(y))
 				self.ROIPlotItemBottom.plot(x=x, y=y, clear=False, pen='k')
 			else:
 				return
@@ -248,12 +284,15 @@ class standardPlot(QtGui.QWidget):
 	def on_updateVerRoiPlot(self):
 		self.ROIPlotItemRight.clear()
 		for roi in self.roiList[CONST_ROI_VER_LIST]:
-			if type(roi) is pg.InfiniteLine: 
-				idx = int((roi.value()-self.posOrigoAxisHorizontal)/self.scaleAxisHorizontal)
-				if idx >= self.lengthAxisHorizontal or idx < 0:
-					return
-				y = np.asarray(self.getProcessedImage()[idx,:])
-				x = np.linspace(self.posOrigoAxisVertical,self.posOrigoAxisVertical+self.lengthAxisVertical*self.scaleAxisVertical,self.lengthAxisVertical)
+			if type(roi) is SingleLineROI: 
+				pos = roi.pos()
+				size = roi.size()
+				points = roi.listPoints()
+
+				xStart = pos[1]+points[0][1]
+				xEnd = xStart+self.lengthAxisVertical*self.scaleAxisVertical*size[1]
+				y = roi.getArrayRegion(np.asarray(self.getProcessedImage()), self.image, axes=(0,1))
+				x = np.linspace(xStart,xEnd,len(y))
 				self.ROIPlotItemRight.plot(x=y, y=x, clear=False, pen='k')
 			else:
 				return
@@ -379,6 +418,21 @@ class standardPlot(QtGui.QWidget):
 		self.thirdDimValueQSBox.valueChanged.connect(self.on_thirdDimQSBoxChanged)
 		self.thirdDimValueQSBox.setValue(self.thirdDimSlider.value())
 
+
+	def updateImageTransform(self):
+		t = QtGui.QTransform()
+
+		self.image.setTransformOriginPoint(self.lengthAxisHorizontal/2,self.lengthAxisVertical/2)
+		t.translate(self.posOrigoAxisHorizontal,self.posOrigoAxisVertical)
+		if self.zAxis:
+			t.rotate(self.angle)
+			t.scale(self.scaleAxisHorizontal,self.scaleAxisVertical)
+		else:
+			t.scale(self.scaleAxisHorizontal,self.scaleAxisVertical)
+			t.rotate(self.angle)
+		
+		self.image.setTransform(t)
+
 	def setCurrentIndex(self, index):
 		self.currentIndex = np.clip(index, 0, self.cData.data.shape[self.zAxis]-1)
 		self.updateImage()
@@ -394,19 +448,25 @@ class standardPlot(QtGui.QWidget):
 			data = data[sl]
 		return np.nanmin(data), np.nanmax(data)
 
+	def centerPoint(self):
+		return [self.posOrigoAxisHorizontal+self.lengthAxisHorizontal*self.scaleAxisHorizontal/2,self.posOrigoAxisVertical+self.lengthAxisVertical*self.scaleAxisVertical/2]
+
 	## General interaction functions
 	#
 	#
 
+	# ROI
+	# 
+	
 	def addHorIlRoi(self):
-		self.addInfiniteLineROI(0, self.ROIPlotItemBottomWidget)
+		self.addSingleLineROI(self.ROIPlotItemBottomWidget)
 
 	def remHorIlRoi(self):
 		if len(self.roiList[CONST_ROI_HOR_LIST]) > 0:
 			self.removeROI(self.roiList[CONST_ROI_HOR_LIST][0])
 
 	def addVerIlRoi(self):
-		self.addInfiniteLineROI(90, self.ROIPlotItemRightWidget)
+		self.addSingleLineROI(self.ROIPlotItemRightWidget)
 
 	def remVerIlRoi(self):
 		if len(self.roiList[CONST_ROI_VER_LIST]) > 0:
@@ -419,6 +479,100 @@ class standardPlot(QtGui.QWidget):
 		if len(self.roiList[CONST_ROI_BOTH_LIST]) > 0:
 			self.removeROI(self.roiList[CONST_ROI_BOTH_LIST][0])
 
+	# Rotation
+	# 
+	 
+	def setRotationAngle(self, val):
+		#self.image.setRotation(val)
+		self.angle = val
+		self.updateImageTransform() 
+		self.on_updateBothRoiPlot()
 
+	
+class SingleLineROI(pg.ROI):
+    """
+    ROI subclass with two freely-moving handles defining a line.
+    
+    ============== =============================================================
+    **Arguments**
+    positions      (list of two length-2 sequences) The endpoints of the line 
+                   segment. Note that, unlike the handle positions specified in 
+                   other ROIs, these positions must be expressed in the normal
+                   coordinate system of the ROI, rather than (0 to 1) relative
+                   to the size of the ROI.
+    \**args        All extra keyword arguments are passed to ROI()
+    ============== =============================================================
+    """
+    
+    def __init__(self, positions=(None, None), pos=None, handles=(None,None), scaleCenter=None, **args):
+        if pos is None:
+            pos = [0,0]
 
+        if scaleCenter is None:
+            scaleCenter = [0,0]
+
+        pg.ROI.__init__(self, pos, [1,1], invertible=False, **args)
+        #ROI.__init__(self, positions[0])
+        if len(positions) > 2:
+            raise Exception("LineSegmentROI must be defined by exactly 2 positions. For more points, use PolyLineROI.")
+        
+        for i, p in enumerate(positions):
+            self.addScaleHandle(p, center=scaleCenter,item=handles[i])
+                
+        
+    def listPoints(self):
+        return [p['item'].pos() for p in self.handles]
+            
+    def paint(self, p, *args):
+        p.setRenderHint(QtGui.QPainter.Antialiasing)
+        p.setPen(self.currentPen)
+        h1 = self.handles[0]['item'].pos()
+        h2 = self.handles[1]['item'].pos()
+        p.drawLine(h1, h2)
+        
+    def boundingRect(self):
+        return self.shape().boundingRect()
+    
+    def shape(self):
+        p = QtGui.QPainterPath()
+    
+        h1 = self.handles[0]['item'].pos()
+        h2 = self.handles[1]['item'].pos()
+        dh = h2-h1
+        if dh.length() == 0:
+            return p
+        pxv = self.pixelVectors(dh)[1]
+        if pxv is None:
+            return p
+            
+        pxv *= 4
+        
+        p.moveTo(h1+pxv)
+        p.lineTo(h2+pxv)
+        p.lineTo(h2-pxv)
+        p.lineTo(h1-pxv)
+        p.lineTo(h1+pxv)
+      
+        return p
+    
+    def getArrayRegion(self, data, img, axes=(0,1)):
+        """
+        Use the position of this ROI relative to an imageItem to pull a slice 
+        from an array.
+        
+        Since this pulls 1D data from a 2D coordinate system, the return value 
+        will have ndim = data.ndim-1
+        
+        See ROI.getArrayRegion() for a description of the arguments.
+        """
+        
+        imgPts = [self.mapToItem(img, h['item'].pos()) for h in self.handles]
+        rgns = []
+        for i in range(len(imgPts)-1):
+            d = pg.Point(imgPts[i+1] - imgPts[i])
+            o = pg.Point(imgPts[i])
+            r = pg.affineSlice(data, shape=(int(d.length()),), vectors=[pg.Point(d.norm())], origin=o, axes=axes, order=1)
+            rgns.append(r)
+            
+        return np.concatenate(rgns, axis=axes[0])
 		

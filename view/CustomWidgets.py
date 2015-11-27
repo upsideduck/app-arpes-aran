@@ -1,6 +1,7 @@
 from PySide import QtGui
 from view.Tools_ARPESWidget import Ui_Tools_ARPESWidget
 from view.Tools_ROIWidget import Ui_Tools_ROIWidget
+from view.Tools_RotationWidget import Ui_Tools_RotationWidget
 
 class Tools_ARPESWidget(QtGui.QWidget):
 	def __init__(self, parent=None):
@@ -19,5 +20,14 @@ class Tools_ROIWidget(QtGui.QWidget):
 		self.ui.verRemILROIBtn.clicked.connect(parent.on_btnRemVerIlRoi)
 		self.ui.addBoxROIBtn.clicked.connect(parent.on_btnAddBoxRoi)
 		self.ui.remBoxROIBtn.clicked.connect(parent.on_btnRemBoxRoi)
+
+
+class Tools_RotationWidget(QtGui.QWidget):
+	def __init__(self, parent):
+		super(Tools_RotationWidget, self).__init__()
+		self.ui = Ui_Tools_RotationWidget()
+		self.ui.setupUi(self)
+		self.ui.rotationSpinBox.valueChanged.connect(parent.on_changeAngle)
+
 
 		

@@ -24,9 +24,7 @@ class GenericPQGController(QtGui.QWidget):
 		tools = Tools_ROIWidget(self)
 		self.view.toolsLayout.addWidget(tools)
 		self.plotWidget.setData(self.cData, metaDataOutput=self.view.dataView)
-
-
-
+		
 
 	## ROI tools slots
 	def on_btnAddHorIlRoi(self):
