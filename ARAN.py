@@ -103,7 +103,6 @@ class MainController(QtGui.QMainWindow):
 		if self.cData:
 			del self.cData
 
-
 		indexes = selected.indexes()
 		# Get selected path of file view
 		file_path = self.filemodel.filePath(indexes[0])
@@ -117,13 +116,13 @@ class MainController(QtGui.QMainWindow):
 
 	def on_loadBtnClicked(self):
 		if isinstance(self.cData, ArpesData):	
-			self.windows.append(ARPESPQGController(copy(self.cData),parent=self))
+			self.windows.append(ARPESPQGController(deepcopy(self.cData)))
 		elif isinstance(self.cData, GenericData):
-			self.windows.append(GenericPQGController(copy(self.cData),parent=self))
+			self.windows.append(GenericPQGController(copy(self.cData)))
 		else:
 			print "Error: Do not recognize the data format"
+
 		self.windows[-1].show()
-		
 
 
 	def on_buildBtnClicked(self):

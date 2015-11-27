@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/GenericPQGView.ui'
 #
-# Created: Tue Nov  3 16:11:33 2015
+# Created: Wed Nov 25 15:45:49 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
