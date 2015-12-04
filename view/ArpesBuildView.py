@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/ArpesBuildView.ui'
+# Form implementation generated from reading ui file 'view/ui/ArpesBuildView.ui'
 #
-# Created: Wed Nov 25 15:45:48 2015
+# Created: Fri Dec  4 12:06:05 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!

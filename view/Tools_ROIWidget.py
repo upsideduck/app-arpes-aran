@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/Tools_ROIWidget.ui'
+# Form implementation generated from reading ui file 'view/ui/Tools_ROIWidget.ui'
 #
-# Created: Wed Nov 25 15:45:49 2015
+# Created: Fri Dec  4 12:06:05 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,10 +12,20 @@ from PySide import QtCore, QtGui
 class Ui_Tools_ROIWidget(object):
     def setupUi(self, Tools_ROIWidget):
         Tools_ROIWidget.setObjectName("Tools_ROIWidget")
-        Tools_ROIWidget.resize(230, 167)
+        Tools_ROIWidget.resize(230, 157)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Tools_ROIWidget.sizePolicy().hasHeightForWidth())
+        Tools_ROIWidget.setSizePolicy(sizePolicy)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Tools_ROIWidget)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.groupBox = QtGui.QGroupBox(Tools_ROIWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -28,7 +38,7 @@ class Ui_Tools_ROIWidget(object):
         self.verticalLayout_4.addWidget(self.label_2)
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem)
         self.horAddILROIBtn = QtGui.QPushButton(self.groupBox)
         self.horAddILROIBtn.setMaximumSize(QtCore.QSize(30, 16777215))
@@ -38,7 +48,7 @@ class Ui_Tools_ROIWidget(object):
         self.horRemILROIBtn.setMaximumSize(QtCore.QSize(30, 16777215))
         self.horRemILROIBtn.setObjectName("horRemILROIBtn")
         self.horizontalLayout_3.addWidget(self.horRemILROIBtn)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.verticalLayout_4.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_5.addLayout(self.verticalLayout_4)
@@ -49,7 +59,7 @@ class Ui_Tools_ROIWidget(object):
         self.verticalLayout_2.addWidget(self.label)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem2 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem2)
         self.verAddILROIBtn = QtGui.QPushButton(self.groupBox)
         self.verAddILROIBtn.setMaximumSize(QtCore.QSize(30, 16777215))
@@ -59,14 +69,14 @@ class Ui_Tools_ROIWidget(object):
         self.verRemILROIBtn.setMaximumSize(QtCore.QSize(30, 16777215))
         self.verRemILROIBtn.setObjectName("verRemILROIBtn")
         self.horizontalLayout.addWidget(self.verRemILROIBtn)
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem3 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem3)
         self.verticalLayout_2.addLayout(self.horizontalLayout)
         self.horizontalLayout_5.addLayout(self.verticalLayout_2)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem4 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem4)
         self.addBoxROIBtn = QtGui.QPushButton(self.groupBox)
         self.addBoxROIBtn.setObjectName("addBoxROIBtn")
@@ -74,11 +84,9 @@ class Ui_Tools_ROIWidget(object):
         self.remBoxROIBtn = QtGui.QPushButton(self.groupBox)
         self.remBoxROIBtn.setObjectName("remBoxROIBtn")
         self.horizontalLayout_2.addWidget(self.remBoxROIBtn)
-        spacerItem5 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem5 = QtGui.QSpacerItem(0, 20, QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem5)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        spacerItem6 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem6)
         self.verticalLayout_3.addWidget(self.groupBox)
 
         self.retranslateUi(Tools_ROIWidget)

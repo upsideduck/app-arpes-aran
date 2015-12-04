@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/Tools_RotationWidget.ui'
+# Form implementation generated from reading ui file 'view/ui/Tools_RotationWidget.ui'
 #
-# Created: Wed Nov 25 15:45:49 2015
+# Created: Fri Dec  4 12:06:05 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,10 +12,20 @@ from PySide import QtCore, QtGui
 class Ui_Tools_RotationWidget(object):
     def setupUi(self, Tools_RotationWidget):
         Tools_RotationWidget.setObjectName("Tools_RotationWidget")
-        Tools_RotationWidget.resize(116, 94)
+        Tools_RotationWidget.resize(116, 84)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Tools_RotationWidget.sizePolicy().hasHeightForWidth())
+        Tools_RotationWidget.setSizePolicy(sizePolicy)
         self.verticalLayout_3 = QtGui.QVBoxLayout(Tools_RotationWidget)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.groupBox = QtGui.QGroupBox(Tools_RotationWidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setObjectName("groupBox")
         self.verticalLayout = QtGui.QVBoxLayout(self.groupBox)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -28,8 +38,6 @@ class Ui_Tools_RotationWidget(object):
         self.rotationSpinBox.setObjectName("rotationSpinBox")
         self.horizontalLayout_2.addWidget(self.rotationSpinBox)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
         self.verticalLayout_3.addWidget(self.groupBox)
 
         self.retranslateUi(Tools_RotationWidget)
