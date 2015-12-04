@@ -2,6 +2,7 @@ from PySide import QtCore, QtGui
 from helper.constants import *
 import numpy as np
 import ext.pyqtgraph as pg
+import ext.pyqtgraph.opengl as gl
 
 class standardPlot(QtGui.QWidget):
 
@@ -488,7 +489,85 @@ class standardPlot(QtGui.QWidget):
 		self.updateImageTransform() 
 		self.on_updateBothRoiPlot()
 
+class glVolumePlot(QtGui.QWidget):
 	
+	def __init__(self):
+		super(glVolumePlot, self).__init__()
+
+		self.cData = None
+		self.threshold = 255
+		self.initUI()
+
+
+	def initUI(self):
+		grid = QtGui.QGridLayout()
+		self.setLayout(grid)
+		self.view = gl.GLViewWidget()
+		grid.addWidget(self.view)
+
+		self.view.opts['distance'] = 200
+ 
+		g = gl.GLGridItem()
+		g.scale(10, 10, 1)
+		self.view.addItem(g)
+
+		self.plotVolumeItem = gl.GLVolumeItem(None)
+		self.view.addItem(self.plotVolumeItem)
+		
+		self.plotAxis = gl.GLAxisItem()
+		self.view.addItem(self.plotAxis)
+
+
+	def setData(self, cData, metaDataOutput=None):
+		if cData != None:
+			self.cData = cData
+		else:
+			return
+
+		self.updateImage()
+		
+		size = self.cData.data.shape
+		
+		self.plotVolumeItem.translate(-size[0]/2,-size[1]/2,-size[2]/2)
+
+		if metaDataOutput:
+			metaDataOutput.setText(self.cData.root.NXentry[self.cData.entryId].tree)
+
+	def updateImage(self):
+		data = np.asarray(self.cData.data)
+		d2 = np.empty(data.shape + (4,), dtype=np.ubyte)
+		
+		
+		norm = data.max() / self.threshold
+		data = data / norm
+		
+		d2[..., 0] = data
+		d2[..., 1] = d2[..., 0]
+		d2[..., 2] = d2[..., 1]
+		#d2[..., 3] = 10
+		
+		#d2[..., 0] = positive * (255./positive.max())
+		#d2[..., 1] = negative * (255./negative.max())
+		#d2[..., 2] = d2[...,1]
+		#d2[..., 3] = 10
+		d2[..., 3] = data
+		d2[..., 3] = (d2[..., 3].astype(float) / 255.) **2 * 255
+		
+		d2[:, 0, 0] = [255,0,0,100]
+		d2[0, :, 0] = [0,255,0,100]
+		d2[0, 0, :] = [0,0,255,100]
+		
+		#print d2[...,3]
+		
+		self.plotVolumeItem.setData(d2)
+		
+	def setThreshold(self, val):
+		if type(val) is int:
+			self.threshold = val
+			self.updateImage()
+		else:
+			print "Error: Value not int"
+
 class SingleLineROI(pg.ROI):
     """
     ROI subclass with two freely-moving handles defining a line.
@@ -575,4 +654,5 @@ class SingleLineROI(pg.ROI):
             rgns.append(r)
             
         return np.concatenate(rgns, axis=axes[0])
+
 		
