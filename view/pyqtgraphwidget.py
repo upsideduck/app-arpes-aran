@@ -33,7 +33,7 @@ class standardPlot(QtGui.QWidget):
 
 	angle = property(getAngle,setAngle,delAngle)
 
-	def __init__(self, parent = None):
+	def __init__(self, showHistogram = False, parent = None):
 		super(standardPlot, self).__init__()
 		
 		self.currentIndex = 0
@@ -45,10 +45,10 @@ class standardPlot(QtGui.QWidget):
 		self.nameAxisZ = ""
 		self.roiList = [[],[],[]]
 
-		self.initUI()
+		self.initUI(showHistogram)
 
 
-	def initUI(self):
+	def initUI(self, showHistogram):
 		grid = QtGui.QGridLayout()
 		self.setLayout(grid)
 		self.view = pg.GraphicsLayoutWidget()
@@ -83,7 +83,8 @@ class standardPlot(QtGui.QWidget):
 
 		# Layout items into PQG widget
 		self.view.addItem(self.mainPlotItem,row=1, col=1)
-		grid.addWidget(self.hist,0,2)
+		if showHistogram:
+			grid.addWidget(self.hist,0,2)
 		self.mainPlotItem.addItem(self.image)
 		grid.setColumnStretch(0,10)
 		grid.setRowStretch(0,10)

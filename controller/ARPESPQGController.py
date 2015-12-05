@@ -17,14 +17,14 @@ class ARPESPQGController(QtGui.QWidget):
 		self.view.setupUi(self)
 
 		self.windows = []
-		
+
 		self.setWindowTitle("ARPES View")
 		self.cData = cData
 
 		pg.setConfigOption('foreground', 'k')
 		pg.setConfigOption('background', None)
 
-		self.plotWidget = standardPlot()
+		self.plotWidget = standardPlot(showHistogram=True)
 		self.plotWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)	
 		self.view.hLayout.addWidget(self.plotWidget)
 
