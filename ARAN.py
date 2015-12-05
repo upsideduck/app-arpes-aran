@@ -12,11 +12,8 @@ import numpy as np
 from copy import *
 import pdb
 
-import matplotlib
-matplotlib.use('Qt4Agg')
-matplotlib.rcParams['backend.qt4']='PySide'
-import matplotlib.pyplot as plt
-from view.matplotlibwidget import *
+from view.pyqtgraphwidget import standardPlot
+
 from model.ArpesData import *
 from helper.SpectrumFile import *
 
@@ -47,7 +44,10 @@ class MainController(QtGui.QMainWindow):
 	def configure_views(self):	
 		## Matplotlib widget
 		# Do this first to be ready with default values
- 		self.DataPlot = MatplotlibWidget(self.view)
+		pg.setConfigOption('foreground', 'k')
+		pg.setConfigOption('background', None)
+ 		self.DataPlot = standardPlot(showHistogram=False)
+
 		# create a layout inside the blank widget and add the matplotlib widget        
 		layout = QtGui.QVBoxLayout(self.view.plotWidget)        
 		layout.addWidget(self.DataPlot)	
@@ -137,18 +137,7 @@ class MainController(QtGui.QMainWindow):
 
 	## Helper functions
 	def updatePlot(self):
-		if len(self.cData.data.shape) == 2:
-			self.DataPlot.plot2DData(self.cData.data, 
-				self.cData.axis1, 
-				self.cData.axis2, 
-				self.cData.axis1name, 
-				self.cData.axis2name)
-		elif len(self.cData.data.shape) == 3:
-			self.DataPlot.plot2DData(self.cData.data[:,:,0], 
-				self.cData.axis2, 
-				self.cData.axis3, 
-				self.cData.axis2name, 
-				self.cData.axis3name)
+		self.DataPlot.setData(self.cData)
 
 	def updateEntryBox(self):
 		self.view.entriesBox.currentIndexChanged[int].disconnect(self.on_entriesBoxChanged)
