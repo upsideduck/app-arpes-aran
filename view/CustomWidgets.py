@@ -36,6 +36,7 @@ class Tools_ViewsWidget(QtGui.QWidget):
 		self.ui = Ui_Tools_ViewsWidget()
 		self.ui.setupUi(self)
 		self.ui.volumeViewBtn.clicked.connect(parent.on_openVolumeView)
+		self.ui.slicesViewBtn.clicked.connect(parent.on_openSlicesView)
 
 
 		

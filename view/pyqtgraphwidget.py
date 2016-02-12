@@ -44,11 +44,11 @@ class standardPlot(QtGui.QWidget):
 		self.autoLevel = True
 		self.nameAxisZ = ""
 		self.roiList = [[],[],[]]
+		self.showHistogram = showHistogram
+		self.initUI()
 
-		self.initUI(showHistogram)
 
-
-	def initUI(self, showHistogram):
+	def initUI(self):
 		grid = QtGui.QGridLayout()
 		self.setLayout(grid)
 		self.view = pg.GraphicsLayoutWidget()
@@ -83,7 +83,7 @@ class standardPlot(QtGui.QWidget):
 
 		# Layout items into PQG widget
 		self.view.addItem(self.mainPlotItem,row=1, col=1)
-		if showHistogram:
+		if self.showHistogram:
 			grid.addWidget(self.hist,0,2)
 		self.mainPlotItem.addItem(self.image)
 		grid.setColumnStretch(0,10)
@@ -134,18 +134,20 @@ class standardPlot(QtGui.QWidget):
 		thirdDimLayout.addWidget(self.thirdDimValueQSBox)
 
 		# Autolevel
-		self.autoLevelCheckBox = QtGui.QCheckBox("Auto Level")
-		self.autoLevelCheckBox.stateChanged[int].connect(self.on_autoHistLevel)
-		if self.autoLevel:
-			self.autoLevelCheckBox.setCheckState(QtCore.Qt.Checked)
-		autoLevelLayout = QtGui.QVBoxLayout()
-		spacerAL = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
-		autoLevelLayout.addWidget(self.hist)
-		autoLevelLayout.addWidget(self.autoLevelCheckBox)
-		autoLevelLayout.addItem(spacerAL)
+		if self.showHistogram:
+			self.autoLevelCheckBox = QtGui.QCheckBox("Auto Level")
+			self.autoLevelCheckBox.stateChanged[int].connect(self.on_autoHistLevel)
+			if self.autoLevel:
+				self.autoLevelCheckBox.setCheckState(QtCore.Qt.Checked)
+			autoLevelLayout = QtGui.QVBoxLayout()
+			spacerAL = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+			autoLevelLayout.addWidget(self.hist)
+			autoLevelLayout.addWidget(self.autoLevelCheckBox)
+			autoLevelLayout.addItem(spacerAL)
+			grid.addLayout(autoLevelLayout,0,2)
 
 		grid.addLayout(thirdDimLayout,2,0,1,3)
-		grid.addLayout(autoLevelLayout,0,2)
+		
 
 	def updateImage(self):
 		if not self.cData:
@@ -568,6 +570,66 @@ class glVolumePlot(QtGui.QWidget):
 			self.updateImage()
 		else:
 			print "Error: Value not int"
+
+class glImageSlicesPlot(QtGui.QWidget):
+	
+	def __init__(self):
+		super(glImageSlicesPlot, self).__init__()
+
+		self.cData = None
+		self.initUI()
+
+
+	def initUI(self):
+		grid = QtGui.QGridLayout()
+		self.setLayout(grid)
+		self.view = gl.GLViewWidget()
+		grid.addWidget(self.view)
+
+		self.view.opts['distance'] = 200
+ 
+ 		self.v1 = gl.GLImageItem(None)
+ 		self.v2 = gl.GLImageItem(None)
+ 		self.v3 = gl.GLImageItem(None)
+		self.view.addItem(self.v1)
+		self.view.addItem(self.v2)
+		self.view.addItem(self.v3)
+
+		ax = gl.GLAxisItem()
+		self.view.addItem(ax)
+
+	def setData(self, cData, metaDataOutput=None):
+		if cData != None:
+			self.cData = cData
+		else:
+			return
+
+		self.updateImage()
+		
+	def updateImage(self):
+		shape = self.cData.data.shape
+
+		## slice out three planes, convert to RGBA for OpenGL texture
+		levels = (self.cData.data.min(),self.cData.data.max())
+		tex1 = pg.makeRGBA(self.cData.data[shape[0]/2], levels=levels)[0]       # yz plane
+		tex2 = pg.makeRGBA(self.cData.data[:,shape[1]/2], levels=levels)[0]     # xz plane
+		tex3 = pg.makeRGBA(self.cData.data[:,:,shape[2]/2], levels=levels)[0]   # xy plane
+		#tex1[:,:,3] = 128
+		#tex2[:,:,3] = 128
+		#tex3[:,:,3] = 128
+
+		## Create three image items from textures, add to view
+		self.v1.setData(tex1)
+		self.v1.translate(-shape[1]/2, -shape[2]/2, 0)
+		self.v1.rotate(90, 0,0,1)
+		self.v1.rotate(-90, 0,1,0)
+		self.v2.setData(tex2)
+		self.v2.translate(-shape[0]/2, -shape[2]/2, 0)
+		self.v2.rotate(-90, 1,0,0)
+		self.v3.setData(tex3)
+		self.v3.translate(-shape[0]/2, -shape[1]/2, 0)
+
+			
 
 class SingleLineROI(pg.ROI):
     """

@@ -8,6 +8,7 @@ from view.CustomWidgets import Tools_ROIWidget
 from view.CustomWidgets import Tools_RotationWidget
 from view.CustomWidgets import Tools_ViewsWidget
 from controller.VolumeViewController import *
+from controller.ImageSlicesViewController import *
 
 class ARPESPQGController(QtGui.QWidget):
 
@@ -72,4 +73,8 @@ class ARPESPQGController(QtGui.QWidget):
 	## Views tools slots
 	def on_openVolumeView(self):
 		self.windows.append(VolumeViewController(self.cData))
+		self.windows[-1].show()
+
+	def on_openSlicesView(self):
+		self.windows.append(ImageSlicesViewController(self.cData))
 		self.windows[-1].show()

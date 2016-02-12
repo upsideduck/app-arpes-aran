@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>128</width>
-    <height>78</height>
+    <height>112</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,6 +36,13 @@
        <widget class="QPushButton" name="volumeViewBtn">
         <property name="text">
          <string>Volume</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="slicesViewBtn">
+        <property name="text">
+         <string>Slices</string>
         </property>
        </widget>
       </item>
