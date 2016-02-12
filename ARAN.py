@@ -14,7 +14,6 @@ import pdb
 
 from view.pyqtgraphwidget import standardPlot
 
-from model.ArpesData import *
 from helper.SpectrumFile import *
 
 

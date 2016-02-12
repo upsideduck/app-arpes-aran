@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/ui/VolumeView.ui'
 #
-# Created: Fri Dec  4 12:06:06 2015
+# Created: Tue Dec  8 11:41:18 2015
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
