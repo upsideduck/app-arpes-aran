@@ -90,21 +90,21 @@ class MatplotlibWidget(FigureCanvas):
 	def __updatePlot(self):
 		if self.data is None:
 			return
-		axises = [float(self.axis1[0]),float(self.axis1[-1]),float(self.axis2[0]),float(self.axis2[-1])]
+		axises = [float(self.axis2[0]),float(self.axis2[-1]),float(self.axis1[0]),float(self.axis1[-1])]
 		self.axes.clear()
 		kargs = {}
 		kargs['extent'] = axises
 		kargs['interpolation'] = self.interpolation
 		kargs['cmap'] = cm.get_cmap(self.cmap)
-		kargs['aspect'] = ((abs(axises[1]-axises[0]))/(abs(axises[3]-axises[2]))/1.4)
+		kargs['aspect'] = 1/((abs(axises[1]-axises[0]))/(abs(axises[3]-axises[2]))/1.4)
 		if self.autoscale == False:
 			kargs['vmin'] = self.vmin + self.voffset
 			kargs['vmax'] = self.vmax + self.voffset
 		self.image = self.axes.imshow(self.data, **kargs)
 		#self.figure.colorbar(self.image)
-		self.axes.set_xlabel(self.axis1Name)
+		self.axes.set_xlabel(self.axis2Name)
 		#self.window.xaxisNameLbl.setText(self.axis1Name+":")
-		self.axes.set_ylabel(self.axis2Name)
+		self.axes.set_ylabel(self.axis1Name)
 		#self.window.yaxisNameLbl.setText(self.axis2Name+":")
 		self.axes.set_title(self.title)
 		
