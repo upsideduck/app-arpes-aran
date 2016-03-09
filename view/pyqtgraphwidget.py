@@ -93,6 +93,7 @@ class standardPlot(QtGui.QWidget):
 	def setData(self, cData, zAxis=None, metaDataOutput=None):
 		if cData != None:
 			self.cData = cData
+			self.cData.nbDataChanged.connect(self.on_dataChanged)
 		else:
 			return
 
@@ -413,7 +414,6 @@ class standardPlot(QtGui.QWidget):
 			self.nameAxisVertical = self.cData.axis2name
 			return
 
-
 		self.thirdDimSlider.setRange(0,self.lengthAxisZ-1)
 		self.thirdDimSlider.valueChanged[int].connect(self.on_thirdDimSliderMoved)
 		self.thirdDimNameLbl.setText(self.nameAxisZ)
@@ -455,6 +455,10 @@ class standardPlot(QtGui.QWidget):
 	def centerPoint(self):
 		return [self.posOrigoAxisHorizontal+self.lengthAxisHorizontal*self.scaleAxisHorizontal/2,self.posOrigoAxisVertical+self.lengthAxisVertical*self.scaleAxisVertical/2]
 
+
+	def on_dataChanged(self):
+		self.updateImage()
+
 	## General interaction functions
 	#
 	#
@@ -491,6 +495,8 @@ class standardPlot(QtGui.QWidget):
 		self.angle = val
 		self.updateImageTransform() 
 		self.on_updateBothRoiPlot()
+
+
 
 class glVolumePlot(QtGui.QWidget):
 	
