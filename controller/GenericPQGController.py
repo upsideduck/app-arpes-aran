@@ -6,7 +6,7 @@ from view.GenericPQGView import Ui_GenericPQGView
 from view.pyqtgraphwidget import *
 from view.CustomWidgets import Tools_ROIWidget
 
-class GenericPQGController(QtGui.QWidget):
+class GenericPQGController(QtGui.QMainWindow):
 
 	def __init__(self, cData, parent=None):
 		super(GenericPQGController, self ).__init__()

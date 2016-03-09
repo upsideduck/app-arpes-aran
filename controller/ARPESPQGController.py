@@ -7,10 +7,13 @@ from view.pyqtgraphwidget import *
 from view.CustomWidgets import Tools_ROIWidget
 from view.CustomWidgets import Tools_RotationWidget
 from view.CustomWidgets import Tools_ViewsWidget
+from view.CustomWidgets import Tools_ARPESWidget
 from controller.VolumeViewController import *
 from controller.ImageSlicesViewController import *
+from model.ArpesData import MakeMapWorker
 
-class ARPESPQGController(QtGui.QWidget):
+
+class ARPESPQGController(QtGui.QMainWindow):
 
 	def __init__(self, cData, parent=None):
 		super(ARPESPQGController, self ).__init__()
@@ -41,6 +44,9 @@ class ARPESPQGController(QtGui.QWidget):
 
 		self.plotWidget.setData(self.cData, metaDataOutput=self.view.dataView)
 		
+
+		self.arpesTools = Tools_ARPESWidget(self)
+		self.view.toolsLayout.addWidget(self.arpesTools)
 
 	def closeEvent(self,event):
 		for window in self.windows:		# Close all windows if  window is closed
@@ -78,3 +84,42 @@ class ARPESPQGController(QtGui.QWidget):
 	def on_openSlicesView(self):
 		self.windows.append(ImageSlicesViewController(self.cData))
 		self.windows[-1].show()
+
+	## ARPES tools slots
+	def on_cboxKSpaceChanged(self,val):
+		if val == QtCore.Qt.Checked and self.cData.kdata is None:
+			self.mapCreationThread = QtCore.QThread()  # no parent!
+			self.mapWorker = MakeMapWorker(self.cData.root)
+			self.mapWorker.moveToThread(self.mapCreationThread)
+			self.mapWorker.finished.connect(self.mapCreationThread.quit)
+			self.mapWorker.progress.connect(self.on_mapWorkerUpdateProgress)
+			self.mapWorker.finished.connect(self.on_mapWorkerDone)	
+			self.mapCreationThread.start()
+			self.arpesTools.kSpaceCheckBox.setEnabled(False)
+			#self.progresslabel = QtGui.QLabel()
+			#self.view.statusBar.addWidget(self.progresslabel)
+			
+		if self.cData.kdata is None and val == QtCore.Qt.Checked:
+			QtCore.QMetaObject.invokeMethod(self.mapWorker, 'makekMapFrom3D', QtCore.Qt.QueuedConnection)
+		elif not self.cData.kdata is None and val == QtCore.Qt.Checked:
+			self.cData.setkSpace()	
+		elif val == QtCore.Qt.Unchecked:
+			self.cData.setAngleSpace()
+
+	#@QtCore.Slot(tuple)
+	def on_mapWorkerDone(self,result):
+		self.cData.kx = result[0]
+		self.cData.ky = result[1]
+		self.cData.kdata = result[2]
+		self.mapWorker.finished.disconnect(self.mapCreationThread.quit)
+		self.mapWorker.progress.disconnect(self.on_mapWorkerUpdateProgress)
+		self.mapWorker.finished.disconnect(self.on_mapWorkerDone)	
+		#self.mapCreationThread = None
+		#self.mapWorker = None
+		self.arpesTools.kSpaceCheckBox.setEnabled(True)
+		self.cData.setkSpace()
+
+	#@QtCore.Slot(float)
+	def on_mapWorkerUpdateProgress(self, result):
+		self.view.statusbar.showMessage("Calculating k-map: "+str(int(result*100))+"% done",10000)
+		#print result	
