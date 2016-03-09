@@ -3,12 +3,15 @@ from view.Tools_ARPESWidget import Ui_Tools_ARPESWidget
 from view.Tools_ROIWidget import Ui_Tools_ROIWidget
 from view.Tools_RotationWidget import Ui_Tools_RotationWidget
 from view.Tools_ViewsWidget import Ui_Tools_ViewsWidget
+from view.Tools_ARPESWidget import Ui_Tools_ARPESWidget
 
 class Tools_ARPESWidget(QtGui.QWidget):
 	def __init__(self, parent=None):
 		super(Tools_ARPESWidget, self).__init__(parent)
 		self.ui = Ui_Tools_ARPESWidget()
 		self.ui.setupUi(self)
+		self.kSpaceCheckBox = self.ui.kSpaceCheckBox		
+		self.ui.kSpaceCheckBox.stateChanged[int].connect(parent.on_cboxKSpaceChanged)
 
 class Tools_ROIWidget(QtGui.QWidget):
 	def __init__(self, parent):
