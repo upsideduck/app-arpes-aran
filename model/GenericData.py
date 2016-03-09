@@ -5,7 +5,7 @@ from PySide import QtCore
 
 class GenericData(QtCore.QObject):
 
-	dataChanged = QtCore.Signal()
+	nbDataChanged = QtCore.Signal()
 	__data = None
 	dataType = CONST_DATATYPE_GENERIC	# Original data
 	root = None
@@ -18,8 +18,7 @@ class GenericData(QtCore.QObject):
 
 	def setData(self, d):
 		self.__data = d
-
-		self.dataChanged.emit()
+		self.nbDataChanged.emit()
 
 	def delData(self):
 		print "delete Data"
@@ -52,6 +51,7 @@ class GenericData(QtCore.QObject):
 
 	def __init__(self, nxRoot, entryId = 0):
 		super(GenericData, self).__init__()
+
 		self.root = nxRoot
 		self.entryId = entryId
 
