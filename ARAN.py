@@ -40,7 +40,7 @@ class MainController(QtGui.QMainWindow):
 		for window in self.windows:		# Close all windows if main window is closed
 			window.close()	
 
-	def configure_views(self):	
+	def configure_views(self):	 
 		## Matplotlib widget
 		# Do this first to be ready with default values
 		pg.setConfigOption('foreground', 'k')
@@ -50,7 +50,7 @@ class MainController(QtGui.QMainWindow):
 		# create a layout inside the blank widget and add the matplotlib widget        
 		layout = QtGui.QVBoxLayout(self.view.plotWidget)        
 		layout.addWidget(self.DataPlot)	
-
+    
 		## Folder View
 		# Setup folder model
 		self.dirmodel = QtGui.QFileSystemModel()
@@ -115,7 +115,7 @@ class MainController(QtGui.QMainWindow):
 
 	def on_loadBtnClicked(self):
 		if isinstance(self.cData, ArpesData):	
-			self.windows.append(ARPESPQGController(deepcopy(self.cData)))
+			self.windows.append(ARPESPQGController(self.cData))
 		elif isinstance(self.cData, GenericData):
 			self.windows.append(GenericPQGController(copy(self.cData)))
 		else:
