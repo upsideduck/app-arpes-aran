@@ -4,3 +4,8 @@
 *.pxp
 *.sr
 ext/*
+dataslicing.py
+isosurface.py
+part1.cl
+kxkytest.cl
+test.py
