@@ -26,6 +26,18 @@ class ArpesData(GenericData):
 		super(ArpesData, self).__init__(nxRoot, entryId)
 		self.reinitializeData()
 
+	def is2D(self):
+		if len(self.data.shape) == 2:
+			return True
+		else:
+			return False
+
+	def is3D(self):
+		if len(self.data.shape) == 3:
+			return True
+		else:
+			return False
+
 	def reinitializeData(self):
 		super(ArpesData, self).reinitializeData()
 		self.adata = self.root.NXentry[self.entryId].analyser.data
@@ -105,31 +117,49 @@ class MakeMapWorker(QtCore.QObject):
 		k,kdata_out = self.makekMap(np.asarray(self.energy),np.asarray(self.angle),np.asarray(self.data))
 		self.finished.emit((k,None,kdata_out))
 
-	# @QtCore.Slot()
-	# def makekMapFrom3D(self):
-	# 	k = None
-	# 	krotation = None
-	# 	kdata= None
-	# 	kdata1 = None
-	# 	kdata2 = None
-	# 	totalIterations = len(self.pangle) + len(self.angle)
-	# 	currentIteration = 0.0
-	# 	self.progress.emit(currentIteration/totalIterations)
-	# 	kdata = np.copy(np.asarray(self.data))
-	# 	# Angular direction
-	# 	for i in range(0,len(self.pangle)):
-	# 		k,kdata_out = self.makekMap(np.asarray(self.energy),np.asarray(self.angle),np.asarray(self.data[i,:,:]))
-	# 		kdata[i,:,:] = kdata_out
-	# 		currentIteration += 1
-	# 		self.progress.emit(currentIteration/totalIterations)
-	# 	# rotation angle direction
-	# 	for i in range(0,len(self.angle)):
-	# 		krotation,kdata_out = self.makekMap(np.asarray(self.energy),np.asarray(self.pangle),np.asarray(kdata[:,i,:]))
-	# 		kdata[:,i,:] = kdata_out
-	# 		currentIteration += 1
-	# 		self.progress.emit(currentIteration/totalIterations)
-	# 	self.finished.emit((k,krotation,kdata))
 
+	## ########
+	## Make kxky mapd in 3D
+	##
+	##
+	#
+	#  C1              - Function of Energy
+	
+	# n               - k-space matrix 1:st index (kx)
+	# k_n0            - first value k-axis (kx)
+	# k_n             - current value on k-axis, iterative variable (kx)
+	# delta_k_n       - step size on k-axis (kx)
+	
+	# m               - k-space matrix 2:nd index (ky)
+	# k_m0            - current value on k-axis (ky)
+	# k_m             - current value on k-axis, iterative variable (ky)
+	# delta_k_m       - step size on k-axis (ky)
+	
+	# phi0            - first value angle-axis (emission angle)
+	# phi_n_rad       - current value on angle-axis in radians, iterative variable (emission angle)
+	# phi_n           - current value on anlge-axis, iterative variable (emission angle)
+	# delta_phi       - step size on angle-axis (emission angle)
+	# theta0          - first value angle-axis (polar angle)
+	# theta_m         - current value on anlge-axis, iterative variable (polar angle)
+	# delta_theta     - step size on angle-axis (polar angle)
+	
+	# i_n             - current index in angle space (emission angle), calculate via k_n hence float
+	# j_m             - current index in angle space (polar angle), calculate via k_m hence float
+	
+	# n_max           - length(-1)/last index of k-axis (kx)
+	# m_max           - length(-1)/last index of k-axis (ky)
+	# i_max           - length(-1)/last index of angle-axis (emission angle)
+	# j_max           - length(-1)/last index of angle-axis (polar angle)
+	
+	# i_1             - lower index of i_n
+	# i_2             - upper index of i_n
+	# j_1             - lower index of j_m
+	# j_2             - upper index of j_m
+	
+	# wL              - weight of left pixel
+	# wR              - weight of right pixel
+	# wU              - weight of upper pixel
+	# wD              - weight of lower pi
 	@QtCore.Slot()
 	def makekMapFrom3D(self):
 		kx = None
@@ -181,37 +211,38 @@ class MakeMapWorker(QtCore.QObject):
 		else:
 			ky1 = 0.512*np.sqrt(E_max)*np.sin(AR_min*np.pi/180)*np.cos(A_zero2*np.pi/180)	
 
-		kx = np.linspace(kx1,kx2,len(self.angle))
-		ky = np.linspace(ky1,ky2,len(self.rangle))
+		multX = 1
+		multY = 1
+
+		kx = np.linspace(kx1,kx2,len(self.angle)*multX)
+		ky = np.linspace(ky1,ky2,len(self.rangle)*multY)
 
 		kdata = np.zeros((len(ky),len(kx),len(self.energy)))
 		## Transform to k-space
 		energy1 =  float(self.energy[0])
 		#energy2 = PE-WF+ energy1 - KF
 		energy2 = energy1
-		#C1 = 1/(0.512*np.sqrt(energy2))
-		C2 = 180/np.pi
 
 		n_max = len(kx)-1
 		m_max = len(ky)-1
 
 		k_n0 = float(kx[0])
 		k_m0 = float(ky[0])
-
 		delta_k_n = float(kx[1]-kx[0])
 		delta_k_m = float(ky[1]-ky[0])
 
-		i_max = len(kx)-1
-		j_max = len(ky)-1
+		i_max = len(self.angle)-10
+		j_max = len(self.rangle)-1
 
 		phi0 = float(self.angle[0])
 		theta0 = float(self.rangle[0])
-
 		delta_phi = float(self.angle[1]-self.angle[0])
 		delta_theta = float(self.rangle[1]-self.rangle[0])
+
+		e0 = float(self.energy[0])
+		delta_e = float(self.energy[1]-self.energy[0])
+
 		os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
-		currentEnergyIteration = 0.0
-		totalIterations = len(self.energy)
 
 		self.ctx = cl.create_some_context()
 		self.queue = cl.CommandQueue(self.ctx, properties=cl.command_queue_properties.PROFILING_ENABLE,)			
@@ -221,23 +252,19 @@ class MakeMapWorker(QtCore.QObject):
 		self.program = cl.Program(self.ctx, fstr).build()
 		mf = cl.mem_flags
 
-		for e in range(0,len(self.energy)):
-			E = self.energy[e]
-			C1 = 1/(0.512*np.sqrt(float(E)))
-			inputArr = np.zeros(self.data[:,:,e].shape, dtype=np.float32)
-			inputArr = self.data[:,:,e].astype(np.float32)
 
-			outputArr = np.zeros((inputArr.shape[0],inputArr.shape[1]), dtype=np.float32) 
+		inputArr = np.zeros(self.data.shape, dtype=np.float32)
+		inputArr = self.data.astype(np.float32)
+		outputArr = np.zeros((len(ky),len(kx),len(self.energy)), dtype=np.float32) 
 
+		self.progress.emit(0)
 
-			input_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=inputArr)
-			output_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, outputArr.nbytes)
-			self.program.kxky(self.queue, outputArr.shape, None, np.float32(k_n0), np.float32(k_m0), np.float32(delta_k_n), np.float32(delta_k_m), np.float32(C1), np.float32(C2), np.float32(phi0), np.float32(theta0), np.float32(delta_phi), np.float32(delta_theta), np.int32(j_max), np.int32(i_max), input_buf, output_buf)
-			#self.program.kxkytest(self.queue, outputArr.shape, None, input_buf, output_buf)
-			cl.enqueue_read_buffer(self.queue, output_buf, outputArr).wait()
-			kdata[:,:,e] = outputArr
+		input_buf = cl.Buffer(self.ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=inputArr)
+		output_buf = cl.Buffer(self.ctx, mf.WRITE_ONLY, outputArr.nbytes)
+		self.program.kxky(self.queue, outputArr.shape, None, np.float32(k_n0), np.float32(k_m0), np.float32(delta_k_n), np.float32(delta_k_m), np.float32(phi0), np.float32(theta0), np.float32(delta_phi), np.float32(delta_theta), np.int32(j_max), np.int32(i_max), np.float32(e0), np.float32(delta_e), input_buf, output_buf)
+		cl.enqueue_read_buffer(self.queue, output_buf, outputArr).wait()
+		kdata = outputArr
 			
-
 		self.finished.emit((kx,ky,kdata))
 
 	def makekMap(self,energy,angle,data):
