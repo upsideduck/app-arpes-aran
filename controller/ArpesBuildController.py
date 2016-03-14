@@ -1,6 +1,6 @@
 from helper.constants import *
 from PySide import QtCore, QtGui 
-from nexpy.api import nexus as nx
+from ext.nexpy.api import nexus as nx
 from view.ArpesBuildView import Ui_ArpesBuildWindow
 import numpy as np
 import matplotlib

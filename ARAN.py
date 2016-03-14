@@ -7,7 +7,7 @@ from view.mainView import Ui_MainWindow
 from controller.ArpesBuildController import *
 from controller.GenericPQGController import *
 from controller.ARPESPQGController import *
-from nexpy.api import nexus as nx
+from ext.nexpy.api import nexus as nx
 import numpy as np
 from copy import *
 import pdb

@@ -1,6 +1,6 @@
 from helper.constants import *
 from PySide import QtCore, QtGui 
-from nexpy.api import nexus as nx
+from ext.nexpy.api import nexus as nx
 import numpy as np
 from view.GenericPQGView import Ui_GenericPQGView
 from view.pyqtgraphwidget import *

@@ -1,6 +1,6 @@
 from helper.constants import *
 from PySide import QtCore, QtGui 
-from nexpy.api import nexus as nx
+from ext.nexpy.api import nexus as nx
 import numpy as np
 from view.GenericPQGView import Ui_GenericPQGView
 from view.pyqtgraphwidget import *
@@ -98,9 +98,13 @@ class ARPESPQGController(QtGui.QMainWindow):
 			self.arpesTools.kSpaceCheckBox.setEnabled(False)
 			#self.progresslabel = QtGui.QLabel()
 			#self.view.statusBar.addWidget(self.progresslabel)
-			
+	
+
 		if self.cData.kdata is None and val == QtCore.Qt.Checked:
-			QtCore.QMetaObject.invokeMethod(self.mapWorker, 'makekMapFrom3D', QtCore.Qt.QueuedConnection)
+			if self.cData.is3D():
+				QtCore.QMetaObject.invokeMethod(self.mapWorker, 'makekMapFrom3D', QtCore.Qt.QueuedConnection)
+			elif self.cData.is2D():
+				self.mapWorker.makekMapFrom2D()
 		elif not self.cData.kdata is None and val == QtCore.Qt.Checked:
 			self.cData.setkSpace()	
 		elif val == QtCore.Qt.Unchecked:
@@ -118,8 +122,9 @@ class ARPESPQGController(QtGui.QMainWindow):
 		#self.mapWorker = None
 		self.arpesTools.kSpaceCheckBox.setEnabled(True)
 		self.cData.setkSpace()
+		self.view.statusbar.showMessage("Calculation of kxky is done",2000)
 
 	#@QtCore.Slot(float)
 	def on_mapWorkerUpdateProgress(self, result):
-		self.view.statusbar.showMessage("Calculating k-map: "+str(int(result*100))+"% done",10000)
+		self.view.statusbar.showMessage("Calculating kxky...",10000)
 		#print result	

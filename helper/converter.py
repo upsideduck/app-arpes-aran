@@ -2,7 +2,7 @@ import re
 import numpy as np
 import matplotlib as ml
 import matplotlib.pyplot as plt
-from nexpy.api import nexus as nx
+from ext.nexpy.api import nexus as nx
 import os
 import model.nexus_template as nxtemplate
 
