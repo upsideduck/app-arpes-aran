@@ -78,7 +78,7 @@ class ArpesData(GenericData):
 			self.axis1 = self.a
 			self.axis2 = self.E
 			self.axis3 = None
-			self.axis1name = CONST_ZAXIS_EVSPA
+			self.axis1name = CONST_ZAXIS_EVSkPA
 			self.axis2name = CONST_ZAXIS_AVSPA
 			self.axis3name = None
 		elif len(self.adata.shape) == 3:
