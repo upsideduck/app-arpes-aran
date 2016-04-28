@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/ui/mainView.ui'
 #
-# Created: Fri Feb 19 12:51:48 2016
+# Created: Thu Apr 28 15:08:11 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -88,12 +88,12 @@ class Ui_MainWindow(object):
         self.entriesBox.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.entriesBox.setObjectName("entriesBox")
         self.verticalLayout_3.addWidget(self.entriesBox)
-        self.dataView = QtGui.QTextEdit(self.widget_2)
-        self.dataView.setEnabled(False)
-        self.dataView.setMinimumSize(QtCore.QSize(0, 0))
-        self.dataView.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.dataView.setObjectName("dataView")
-        self.verticalLayout_3.addWidget(self.dataView)
+        self.metaDataView = QtGui.QTextEdit(self.widget_2)
+        self.metaDataView.setEnabled(False)
+        self.metaDataView.setMinimumSize(QtCore.QSize(0, 0))
+        self.metaDataView.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.metaDataView.setObjectName("metaDataView")
+        self.verticalLayout_3.addWidget(self.metaDataView)
         self.horizontalLayout.addWidget(self.widget_2)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)

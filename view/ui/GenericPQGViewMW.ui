@@ -6,61 +6,62 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1083</width>
+    <height>782</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <layout class="QGridLayout" name="hLayout"/>
-      </item>
-      <item>
-       <spacer name="verticalSpacer">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="leftColumSplitter">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QSplitter" name="metaDataSplitter">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <widget class="QSplitter" name="plottoolsSplitter">
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Minimum</enum>
+        <widget class="QWidget" name="">
+         <layout class="QGridLayout" name="mainPlotLayout"/>
+        </widget>
+        <widget class="QWidget" name="">
+         <layout class="QHBoxLayout" name="toolsLayout"/>
+        </widget>
+       </widget>
+       <widget class="QTextEdit" name="metaDataView">
+        <property name="enabled">
+         <bool>false</bool>
         </property>
-        <property name="sizeHint" stdset="0">
+        <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>300</width>
           <height>0</height>
          </size>
         </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="toolsLayout"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QTextEdit" name="dataView">
-      <property name="enabled">
-       <bool>false</bool>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>300</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>300</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="layoutDirection">
-       <enum>Qt::LeftToRight</enum>
-      </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>

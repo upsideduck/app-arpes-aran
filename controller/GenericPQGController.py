@@ -19,11 +19,11 @@ class GenericPQGController(QtGui.QMainWindow):
 		pg.setConfigOption('background', None)
 
 		self.plotWidget = standardPlot()
-		self.view.hLayout.addWidget(self.plotWidget)
+		self.view.mainPlotLayout.addWidget(self.plotWidget)
 
 		tools = Tools_ROIWidget(self)
 		self.view.toolsLayout.addWidget(tools)
-		self.plotWidget.setData(self.cData, metaDataOutput=self.view.dataView)
+		self.plotWidget.setData(self.cData, metaDataOutput=self.view.metaDataView)
 		
 
 	## ROI tools slots

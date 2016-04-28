@@ -30,7 +30,7 @@ class ARPESPQGController(QtGui.QMainWindow):
 
 		self.plotWidget = standardPlot(showHistogram=True)
 		self.plotWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)	
-		self.view.hLayout.addWidget(self.plotWidget)
+		self.view.mainPlotLayout.addWidget(self.plotWidget)
 
 		roiTools = Tools_ROIWidget(self)		
 		self.view.toolsLayout.addWidget(roiTools)
@@ -42,7 +42,7 @@ class ARPESPQGController(QtGui.QMainWindow):
 			viewsTools = Tools_ViewsWidget(self)
 			self.view.toolsLayout.addWidget(viewsTools)
 
-		self.plotWidget.setData(self.cData, metaDataOutput=self.view.dataView)
+		self.plotWidget.setData(self.cData, metaDataOutput=self.view.metaDataView)
 		
 
 		self.arpesTools = Tools_ARPESWidget(self)

@@ -106,7 +106,7 @@ class MainController(QtGui.QMainWindow):
             return
         self.updatePlot()
         self.updateEntryBox()
-        self.view.dataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
+        self.view.metaDataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
         self.view.loadBtn.setEnabled(True)
 
     def on_loadBtnClicked(self):
@@ -126,7 +126,7 @@ class MainController(QtGui.QMainWindow):
     def on_entriesBoxChanged(self, index):
         newEntryId = self.view.entriesBox.itemData(index)
         self.cData.entryId = newEntryId
-        self.view.dataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
+        self.view.metaDataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
         self.updatePlot()
 
     ## Helper functions

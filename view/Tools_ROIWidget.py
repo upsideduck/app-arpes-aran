@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/ui/Tools_ROIWidget.ui'
 #
-# Created: Fri Feb 19 12:51:49 2016
+# Created: Thu Apr 28 15:08:12 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
