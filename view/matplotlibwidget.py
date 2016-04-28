@@ -49,7 +49,7 @@ class MatplotlibWidget(FigureCanvas):
 	def plot2DData(self,data,axis1,axis2,axis1Name="",axis2Name="", title=""):
 		self.data = data
 		self.axis1 = np.asarray(axis1)
-		self.axis2 = np.asarray(axis2)[::-1]		# Due to how plot is displaying, it vert axis needs to be reversed
+		self.axis2 = np.asarray(axis2)		# Due to how plot is displaying, it vert axis needs to be reversed
 		self.axis1Name = axis1Name
 		self.axis2Name = axis2Name
 		self.title = title
@@ -96,7 +96,7 @@ class MatplotlibWidget(FigureCanvas):
 		kargs['extent'] = axises
 		kargs['interpolation'] = self.interpolation
 		kargs['cmap'] = cm.get_cmap(self.cmap)
-		kargs['aspect'] = 1/((abs(axises[1]-axises[0]))/(abs(axises[3]-axises[2]))/1.4)
+		kargs['aspect'] = ((abs(axises[1]-axises[0]))/(abs(axises[3]-axises[2]))/1.4)
 		if self.autoscale == False:
 			kargs['vmin'] = self.vmin + self.voffset
 			kargs['vmax'] = self.vmax + self.voffset
@@ -108,6 +108,6 @@ class MatplotlibWidget(FigureCanvas):
 		#self.window.yaxisNameLbl.setText(self.axis2Name+":")
 		self.axes.set_title(self.title)
 		
-		self.axes.axvline(x=float(self.axis1[self.axhorpos]),color='r',ls='solid')
-		self.axes.axhline(y=float(self.axis2[self.axverpos]),color='r',ls='solid')
+		#self.axes.axvline(x=float(self.axis1[self.axhorpos]),color='r',ls='solid')
+		#self.axes.axhline(y=float(self.axis2[self.axverpos]),color='r',ls='solid')
 		self.draw()
