@@ -2,37 +2,13 @@ from PySide import QtCore, QtGui
 from helper.constants import *
 import numpy as np
 import ext.pyqtgraph as pg
+from ext.pyqtgraph.dockarea import *
 import ext.pyqtgraph.opengl as gl
 
-
 class standardPlot(QtGui.QWidget):
-	__angle = 0
 
-	# Setters and Getters
-	# Angle property
-	def getAngle(self):
-		return self.__angle
 
-	def setAngle(self, d):
-		if self.__angle == 0 and d != 0:
-			self.mainPlotItem.getAxis('bottom').setStyle(showValues=False)
-			self.mainPlotItem.getAxis('left').setStyle(showValues=False)
-			self.ROIPlotItemBottomWidget.getAxis('bottom').setStyle(showValues=False)
-			self.ROIPlotItemRightWidget.getAxis('left').setStyle(showValues=False)
-		if d == 0:
-			self.mainPlotItem.getAxis('bottom').setStyle(showValues=True)
-			self.mainPlotItem.getAxis('left').setStyle(showValues=True)
-			self.ROIPlotItemBottomWidget.getAxis('bottom').setStyle(showValues=True)
-			self.ROIPlotItemRightWidget.getAxis('left').setStyle(showValues=True)
-
-		self.__angle = d
-
-	def delAngle(self):
-		del self.__angle
-
-	angle = property(getAngle, setAngle, delAngle)
-
-	def __init__(self, showHistogram=False, parent=None):
+	def __init__(self, showHistogram=False, showSlices=False, parent=None, ):
 		super(standardPlot, self).__init__()
 
 		self.currentIndex = 0
@@ -44,23 +20,35 @@ class standardPlot(QtGui.QWidget):
 		self.nameAxisZ = ""
 		self.roiList = [[], [], []]
 		self.showHistogram = showHistogram
+		self.showSlices = showSlices
+		self.hSliceRoi = None
+		self.vSliceRoi = None
 		self.initUI()
 
 	def initUI(self):
 		grid = QtGui.QGridLayout()
 		self.setLayout(grid)
-		self.view = pg.GraphicsLayoutWidget()
+		#self.view = pg.GraphicsLayoutWidget()
+		self.view = DockArea()
+		self.mainPlotDock = Dock("Plot", size=(200,200), hideTitle=True)
+		self.view.addDock(self.mainPlotDock, 'right')## place d3 at bottom edge of d1
+
 		grid.addWidget(self.view)
 
 		# Init all items for widget
-		self.mainPlotItem = pg.PlotItem()
+		self.mainPlotWidget = pg.PlotWidget()
 		self.ROIPlotItemBottomWidget = pg.PlotWidget()
-		self.ROIPlotItemBottom = self.ROIPlotItemBottomWidget.getPlotItem()
 		self.ROIPlotItemRightWidget = pg.PlotWidget()
-		self.ROIPlotItemRight = self.ROIPlotItemRightWidget.getPlotItem()
 		self.image = pg.ImageItem()
 		self.hist = pg.HistogramLUTWidget()
 		self.thirdDimToolsLayouts = []
+
+		self.hSliceImage = pg.ImageItem()
+		self.hSlicePlotWidget= pg.PlotWidget()
+		self.hSlicePlotWidget.addItem(self.hSliceImage)
+		self.vSliceImage = pg.ImageItem()
+		self.vSlicePlotWidget = pg.PlotWidget()
+		self.vSlicePlotWidget.addItem(self.vSliceImage)
 
 		# Setup histogram
 		self.hist.item.setImageItem(self.image)
@@ -80,10 +68,12 @@ class standardPlot(QtGui.QWidget):
 		grid.addWidget(self.ROIPlotItemBottomWidget, 1, 0)
 
 		# Layout items into PQG widget
-		self.view.addItem(self.mainPlotItem, row=1, col=1)
+		self.mainPlotDock.addWidget(self.mainPlotWidget)
+
 		if self.showHistogram:
 			grid.addWidget(self.hist, 0, 2)
-		self.mainPlotItem.addItem(self.image)
+		self.mainPlotWidget.addItem(self.image)
+
 		grid.setColumnStretch(0, 10)
 		grid.setRowStretch(0, 10)
 
@@ -99,24 +89,26 @@ class standardPlot(QtGui.QWidget):
 		if len(self.thirdDimToolsLayouts):
 			self.removeThirdDimToolsLayouts()
 
-		if len(self.cData.data.shape) > 2:
+		if self.cData.is3D():
 			if zAxis == None:
 				zAxis = 2
 			self.addThirdDimTools()
 			self.setZAxis(zAxis)
 		else:
+			self.showSlices = False # Alwasy set false for none 3D data
 			self.setZAxis(None)
 
 		self.updateImage()
 		self.updateImageAxes()
 
+
 		# self.image.scale(self.scaleAxisHorizontal,self.scaleAxisVertical)
 		# self.image.setPos(self.posOrigoAxisHorizontal,self.posOrigoAxisVertical)
-		self.ROIPlotItemRight.setLabel('bottom', text="I")
-		self.mainPlotItem.invertY(False)
+		self.ROIPlotItemRightWidget.getPlotItem().setLabel('bottom', text="I")
+		self.mainPlotWidget.invertY(False)
 		ratio = (self.lengthAxisVertical / self.lengthAxisHorizontal) / (
 		self.scaleAxisHorizontal / self.scaleAxisVertical)
-		self.mainPlotItem.getViewBox().setAspectLocked(lock=True, ratio=ratio)
+		self.mainPlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
 
 		if metaDataOutput:
 			metaDataOutput.setText(self.cData.root.NXentry[self.cData.entryId].tree)
@@ -133,7 +125,21 @@ class standardPlot(QtGui.QWidget):
 		thirdDimLayout.addWidget(self.thirdDimSlider)
 		thirdDimLayout.addWidget(self.thirdDimValueQSBox)
 
+		# Slices controls
+		if self.showSlices:
+			self.thirdDimSlicesCheckBox =  QtGui.QCheckBox("Slices")
+			thirdDimLayout.addWidget(self.thirdDimSlicesCheckBox)
+			self.thirdDimSlicesCheckBox.stateChanged[int].connect(self.on_thirdDimSlicesCheckBox)
+			
+			self.hSlicePlotDock = Dock("Horizontal Slice", size=(100,100), widget=self.hSlicePlotWidget, hideTitle=True)
+			self.view.addDock(self.hSlicePlotDock, 'left')
 
+			self.vSlicePlotDock = Dock("Vertical Slice", size=(100,100), widget=self.vSlicePlotWidget, hideTitle=True)
+			self.view.addDock(self.vSlicePlotDock, 'bottom', self.hSlicePlotDock) 
+			self.vSlicePlotDock.hide()
+			self.hSlicePlotDock.hide()
+
+		
 		# Autolevel
 		if self.showHistogram:
 			self.autoLevelCheckBox = QtGui.QCheckBox("Auto Level")
@@ -164,7 +170,6 @@ class standardPlot(QtGui.QWidget):
 			return
 
 		image = self.getProcessedImage()
-
 		self.image.updateImage(image)
 
 		if self.autoLevel:
@@ -208,7 +213,7 @@ class standardPlot(QtGui.QWidget):
 		roi.setPen(QtGui.QPen(QtGui.QColor(255, 255, 0, 200)))
 		roi.setZValue(1)
 		self.roiList[roiListID].append(roi)
-		self.mainPlotItem.addItem(roi)
+		self.mainPlotWidget.addItem(roi)
 		roi.sigRegionChanged.connect(updatePlot)
 		plot.show()
 		updatePlot()
@@ -224,7 +229,7 @@ class standardPlot(QtGui.QWidget):
 		roi.setPen(QtGui.QPen(QtGui.QColor(255, 255, 0, 200)))
 		roi.setZValue(1)
 		self.roiList[CONST_ROI_BOTH_LIST].append(roi)
-		self.mainPlotItem.addItem(roi)
+		self.mainPlotWidget.addItem(roi)
 		roi.sigRegionChanged.connect(self.on_updateBothRoiPlot)
 		self.ROIPlotItemRightWidget.show()
 		self.ROIPlotItemBottomWidget.show()
@@ -238,7 +243,7 @@ class standardPlot(QtGui.QWidget):
 				print "Could not remove ROI plot"
 				return
 			self.roiList[CONST_ROI_HOR_LIST].remove(roi)
-			self.mainPlotItem.removeItem(roi)
+			self.mainPlotWidget.removeItem(roi)
 			roi = None
 			self.on_updateHorRoiPlot()
 
@@ -249,7 +254,7 @@ class standardPlot(QtGui.QWidget):
 				print "Could not remove ROI plot"
 				return
 			self.roiList[CONST_ROI_VER_LIST].remove(roi)
-			self.mainPlotItem.removeItem(roi)
+			self.mainPlotWidget.removeItem(roi)
 			roi = None
 			self.on_updateVerRoiPlot()
 
@@ -260,7 +265,7 @@ class standardPlot(QtGui.QWidget):
 				print "Could not remove ROI plot"
 				return
 			self.roiList[CONST_ROI_BOTH_LIST].remove(roi)
-			self.mainPlotItem.removeItem(roi)
+			self.mainPlotWidget.removeItem(roi)
 			roi = None
 			self.on_updateBothRoiPlot()
 
@@ -276,7 +281,7 @@ class standardPlot(QtGui.QWidget):
 
 
 	def on_updateHorRoiPlot(self):
-		self.ROIPlotItemBottom.clear()
+		self.ROIPlotItemBottomWidget.getPlotItem().clear()
 		for roi in self.roiList[CONST_ROI_HOR_LIST]:
 			if type(roi) is SingleLineROI:
 				pos = roi.pos()
@@ -286,7 +291,7 @@ class standardPlot(QtGui.QWidget):
 				xEnd = xStart + self.lengthAxisHorizontal * self.scaleAxisHorizontal * size[0]
 				y = roi.getArrayRegion(np.asarray(self.getProcessedImage()), self.image, axes=(0, 1))
 				x = np.linspace(xStart, xEnd, len(y))
-				self.ROIPlotItemBottom.plot(x=x, y=y, clear=False, pen='k')
+				self.ROIPlotItemBottomWidget.getPlotItem().plot(x=x, y=y, clear=False, pen='k')
 			else:
 				return
 
@@ -298,12 +303,12 @@ class standardPlot(QtGui.QWidget):
 				y = selected.mean(axis=1)
 				x = np.linspace(pos[0], pos[0] + size[0], len(y))
 
-				self.ROIPlotItemBottom.plot(y=y, x=x, clear=False, pen='r')
+				self.ROIPlotItemBottomWidget.getPlotItem().plot(y=y, x=x, clear=False, pen='r')
 			else:
 				return
 
 	def on_updateVerRoiPlot(self):
-		self.ROIPlotItemRight.clear()
+		self.ROIPlotItemRightWidget.getPlotItem().clear()
 		for roi in self.roiList[CONST_ROI_VER_LIST]:
 			if type(roi) is SingleLineROI:
 				pos = roi.pos()
@@ -314,7 +319,7 @@ class standardPlot(QtGui.QWidget):
 				xEnd = xStart + self.lengthAxisVertical * self.scaleAxisVertical * size[1]
 				y = roi.getArrayRegion(np.asarray(self.getProcessedImage()), self.image, axes=(0, 1))
 				x = np.linspace(xStart, xEnd, len(y))
-				self.ROIPlotItemRight.plot(x=y, y=x, clear=False, pen='k')
+				self.ROIPlotItemRightWidget.getPlotItem().plot(x=y, y=x, clear=False, pen='k')
 			else:
 				return
 
@@ -325,7 +330,7 @@ class standardPlot(QtGui.QWidget):
 				size = roi.size()
 				y = selected.mean(axis=0)
 				x = np.linspace(pos[1], pos[1] + size[1], len(y))
-				self.ROIPlotItemRight.plot(y=x, x=y, clear=False, pen='r')
+				self.ROIPlotItemRightWidget.getPlotItem().plot(y=x, x=y, clear=False, pen='r')
 			else:
 				return
 
@@ -342,6 +347,12 @@ class standardPlot(QtGui.QWidget):
 		if int(current / step) != self.thirdDimSlider.value():
 			self.thirdDimValueQSBox.setValue(self.axisZarr[val])
 
+		try:
+			self.hSliceZaxisLine.setValue(self.axisZarr[val])
+			self.vSliceZaxisLine.setValue(self.axisZarr[val])
+		except Exception, e:
+			pass
+
 	def on_thirdDimQSBoxChanged(self, val):
 		step = ((self.axisZarr[-1] - self.axisZarr[0]) / (len(self.axisZarr) - 1))
 		current = val - self.axisZarr[0]
@@ -357,6 +368,60 @@ class standardPlot(QtGui.QWidget):
 		else:
 			pass
 		self.updateImage()
+
+	def on_thirdDimSlicesCheckBox(self, state):
+		if state == QtCore.Qt.Checked:
+
+			self.hSliceRoi = SingleLineROI(positions=self.hInitSlicePos(), scaleCenter=self.centerPoint(), removable=True)
+			self.hSliceRoi.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0, 200)))
+			self.mainPlotWidget.addItem(self.hSliceRoi)
+			self.hSliceRoi.sigRegionChanged.connect(self.on_hSliceRoiChange)
+			self.on_hSliceRoiChange(self.hSliceRoi)
+			self.hSliceZaxisLine = pg.InfiniteLine(angle=0)
+			self.hSlicePlotWidget.addItem(self.hSliceZaxisLine)
+			self.hSliceZaxisLine.setValue(self.thirdDimValueQSBox.value())
+			self.hSlicePlotDock.show()
+
+			self.vSliceRoi = SingleLineROI(positions=self.vInitSlicePos(), scaleCenter=self.centerPoint(), removable=True)
+			self.vSliceRoi.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0, 200)))
+			self.mainPlotWidget.addItem(self.vSliceRoi)
+			self.vSliceRoi.sigRegionChanged.connect(self.on_vSliceRoiChange)
+			self.on_vSliceRoiChange(self.vSliceRoi)
+			self.vSliceZaxisLine = pg.InfiniteLine(angle=0)
+			self.vSlicePlotWidget.addItem(self.vSliceZaxisLine)
+			self.vSliceZaxisLine.setValue(self.thirdDimValueQSBox.value())
+			self.vSlicePlotDock.show()
+
+		elif state == QtCore.Qt.Unchecked:
+			self.hSlicePlotDock.hide()
+			self.mainPlotWidget.removeItem(self.hSliceRoi)
+			self.hSlicePlotWidget.removeItem(self.hSliceZaxisLine)
+			self.hSliceZaxisLine = None
+			self.hSliceRoi.sigRegionChanged.disconnect(self.on_hSliceRoiChange)
+			self.hSliceRoi = None
+			
+			self.vSlicePlotDock.hide()
+			self.mainPlotWidget.removeItem(self.vSliceRoi)
+			self.vSlicePlotWidget.removeItem(self.vSliceZaxisLine)
+			self.vSliceZaxisLine = None
+			self.vSliceRoi.sigRegionChanged.disconnect(self.on_vSliceRoiChange)
+			self.vSliceRoi = None
+		else:
+			pass
+
+	def on_hSliceRoiChange(self,roi):
+		img = roi.getArrayRegion(np.asarray(self.cData.data), self.image, axes=(0,1))
+		self.hSliceImage.setImage(img, autoLevels=True)
+		#shape = img.shape
+		#ratio = float(shape[1]/shape[0])
+		#self.hSlicePlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
+
+	def on_vSliceRoiChange(self,roi):
+		img = roi.getArrayRegion(np.asarray(self.cData.data), self.image, axes=(0,1))
+		self.vSliceImage.setImage(img, autoLevels=True)
+		#shape = img.shape
+		#ratio = float(shape[1]/shape[0])
+		#self.vSlicePlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
 
 	def getProcessedImage(self):
 		image = np.asarray(self.cData.data)
@@ -437,21 +502,30 @@ class standardPlot(QtGui.QWidget):
 		#self.thirdDimValueQSBox.setValue(self.thirdDimSlider.value())
 
 	def updateImageAxes(self):
+
+
 		t = QtGui.QTransform()
-
-		self.image.setTransformOriginPoint(self.lengthAxisHorizontal / 2, self.lengthAxisVertical / 2)
 		t.translate(self.posOrigoAxisHorizontal, self.posOrigoAxisVertical)
-		if self.zAxis:
-			t.rotate(self.angle)
-			t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
-		else:
-			t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
-			t.rotate(self.angle)
-
+		t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
 		self.image.setTransform(t)
 
-		self.mainPlotItem.setLabel('bottom', text=self.nameAxisHorizontal)
-		self.mainPlotItem.setLabel('left', text=self.nameAxisVertical)
+		if self.showSlices:
+			th = QtGui.QTransform()
+			th.translate(self.posOrigoAxisHorizontal, self.axisZarr[0])
+			th.scale(self.scaleAxisHorizontal, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
+			self.hSliceImage.setTransform(th)
+			self.hSlicePlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
+			self.hSlicePlotWidget.setLabel('left', text=self.nameAxisZ)
+
+			tv = QtGui.QTransform()
+			tv.translate(self.posOrigoAxisVertical, self.axisZarr[0])
+			tv.scale(self.scaleAxisVertical, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
+			self.vSliceImage.setTransform(tv)
+			self.vSlicePlotWidget.setLabel('bottom', text=self.nameAxisVertical)
+			self.vSlicePlotWidget.setLabel('left', text=self.nameAxisZ)
+
+		self.mainPlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
+		self.mainPlotWidget.setLabel('left', text=self.nameAxisVertical)
 
 	def setCurrentIndex(self, index):
 		self.currentIndex = np.clip(index, 0, self.cData.data.shape[self.zAxis] - 1)
@@ -472,14 +546,25 @@ class standardPlot(QtGui.QWidget):
 		return [self.posOrigoAxisHorizontal + self.lengthAxisHorizontal * self.scaleAxisHorizontal / 2,
 				self.posOrigoAxisVertical + self.lengthAxisVertical * self.scaleAxisVertical / 2]
 
+	def hInitSlicePos(self):
+		centerPoint = self.centerPoint()
+		return ([self.posOrigoAxisHorizontal, centerPoint[1]],[self.posOrigoAxisHorizontal + self.lengthAxisHorizontal * self.scaleAxisHorizontal,centerPoint[1]])
+
+	def vInitSlicePos(self):
+		centerPoint = self.centerPoint()
+		return ([centerPoint[0], self.posOrigoAxisVertical],[centerPoint[0], self.posOrigoAxisVertical + self.lengthAxisVertical * self.scaleAxisVertical])
+
 	def on_dataChanged(self):
 		self.setZAxis(self.zAxis)
 		self.updateImage()
+		if self.showSlices:
+			self.thirdDimSlicesCheckBox.setCheckState(QtCore.Qt.Unchecked)
 		self.updateImageAxes()
 
 	## General interaction functions
 	#
 	#
+
 
 	# ROI
 	# 
@@ -505,14 +590,6 @@ class standardPlot(QtGui.QWidget):
 		if len(self.roiList[CONST_ROI_BOTH_LIST]) > 0:
 			self.removeROI(self.roiList[CONST_ROI_BOTH_LIST][0])
 
-	# Rotation
-	# 
-
-	def setRotationAngle(self, val):
-		# self.image.setRotation(val)
-		self.angle = val
-		self.updateImageAxes()
-		self.on_updateBothRoiPlot()
 
 
 class glVolumePlot(QtGui.QWidget):
@@ -649,38 +726,29 @@ class glImageSlicesPlot(QtGui.QWidget):
 		self.v3.translate(-shape[0] / 2, -shape[1] / 2, 0)
 
 
+
+
 class SingleLineROI(pg.ROI):
-	"""
-    ROI subclass with two freely-moving handles defining a line.
-    
-    ============== =============================================================
-    **Arguments**
-    positions      (list of two length-2 sequences) The endpoints of the line 
-                   segment. Note that, unlike the handle positions specified in 
-                   other ROIs, these positions must be expressed in the normal
-                   coordinate system of the ROI, rather than (0 to 1) relative
-                   to the size of the ROI.
-    \**args        All extra keyword arguments are passed to ROI()
-    ============== =============================================================
-    """
+
+	linkedPlot = None
 
 	def __init__(self, positions=(None, None), pos=None, handles=(None, None), scaleCenter=None, **args):
 		if pos is None:
 			pos = [0, 0]
-
 		if scaleCenter is None:
 			scaleCenter = [0, 0]
-
 		pg.ROI.__init__(self, pos, [1, 1], invertible=False, **args)
 		# ROI.__init__(self, positions[0])
 		if len(positions) > 2:
-			raise Exception("LineSegmentROI must be defined by exactly 2 positions. For more points, use PolyLineROI.")
-
+			raise Exception(
+				"LineSegmentROI must be defined by exactly 2 positions. For more points, use PolyLineROI.")
 		for i, p in enumerate(positions):
-			self.addScaleHandle(p, center=scaleCenter, item=handles[i])
+			self.addScaleRotateHandle(p, center=scaleCenter, item=handles[i])
+
 
 	def listPoints(self):
 		return [p['item'].pos() for p in self.handles]
+
 
 	def paint(self, p, *args):
 		p.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -689,8 +757,10 @@ class SingleLineROI(pg.ROI):
 		h2 = self.handles[1]['item'].pos()
 		p.drawLine(h1, h2)
 
+
 	def boundingRect(self):
 		return self.shape().boundingRect()
+
 
 	def shape(self):
 		p = QtGui.QPainterPath()
@@ -714,24 +784,31 @@ class SingleLineROI(pg.ROI):
 
 		return p
 
+	def checkPointMove(self, handle, pos, modifiers):
+		"""When handles move, they must ask the ROI if the move is acceptable.
+		By default, this always returns True. Subclasses may wish override.
+		"""
+
+
+		return True
+
 	def getArrayRegion(self, data, img, axes=(0, 1)):
 		"""
-        Use the position of this ROI relative to an imageItem to pull a slice 
-        from an array.
-        
-        Since this pulls 1D data from a 2D coordinate system, the return value 
-        will have ndim = data.ndim-1
-        
-        See ROI.getArrayRegion() for a description of the arguments.
-        """
+		Use the position of this ROI relative to an imageItem to pull a slice
+		from an array.
+
+		Since this pulls 1D data from a 2D coordinate system, the return value
+		will have ndim = data.ndim-1
+
+		See ROI.getArrayRegion() for a description of the arguments.
+		"""
 
 		imgPts = [self.mapToItem(img, h['item'].pos()) for h in self.handles]
 		rgns = []
 		for i in range(len(imgPts) - 1):
 			d = pg.Point(imgPts[i + 1] - imgPts[i])
 			o = pg.Point(imgPts[i])
-			r = pg.affineSlice(data, shape=(int(d.length()),), vectors=[pg.Point(d.norm())], origin=o, axes=axes,
-							   order=1)
+			r = pg.affineSlice(data, shape=(int(d.length()),), vectors=[pg.Point(d.norm())], origin=o, axes=axes, order=1)
 			rgns.append(r)
 
 		return np.concatenate(rgns, axis=axes[0])

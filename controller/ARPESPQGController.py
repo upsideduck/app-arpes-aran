@@ -5,7 +5,6 @@ import numpy as np
 from view.GenericPQGView import Ui_GenericPQGView
 from view.pyqtgraphwidget import *
 from view.CustomWidgets import Tools_ROIWidget
-from view.CustomWidgets import Tools_RotationWidget
 from view.CustomWidgets import Tools_ViewsWidget
 from view.CustomWidgets import Tools_ARPESWidget
 from controller.VolumeViewController import *
@@ -28,15 +27,12 @@ class ARPESPQGController(QtGui.QMainWindow):
 		pg.setConfigOption('foreground', 'k')
 		pg.setConfigOption('background', None)
 
-		self.plotWidget = standardPlot(showHistogram=True)
+		self.plotWidget = standardPlot(showHistogram=True, showSlices=True)
 		self.plotWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)	
 		self.view.mainPlotLayout.addWidget(self.plotWidget)
 
 		roiTools = Tools_ROIWidget(self)		
 		self.view.toolsLayout.addWidget(roiTools)
-
-		rotationTools = Tools_RotationWidget(self)
-		self.view.toolsLayout.addWidget(rotationTools)
 		
 		if len(self.cData.data.shape) == 3:
 			viewsTools = Tools_ViewsWidget(self)
@@ -71,10 +67,6 @@ class ARPESPQGController(QtGui.QMainWindow):
 
 	def on_btnRemBoxRoi(self):
 		self.plotWidget.remBoxRoi()
-
-	## Rotation tools slots
-	def on_changeAngle(self, val):
-		self.plotWidget.setRotationAngle(val)
 
 	## Views tools slots
 	def on_openVolumeView(self):
