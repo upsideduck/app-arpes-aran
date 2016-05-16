@@ -7,6 +7,7 @@ import ext.pyqtgraph.opengl as gl
 
 class standardPlot(QtGui.QWidget):
 
+	roiSelected = QtCore.Signal(pg.ROI)
 
 	def __init__(self, showHistogram=False, showSlices=False, parent=None, ):
 		super(standardPlot, self).__init__()
@@ -215,6 +216,9 @@ class standardPlot(QtGui.QWidget):
 		self.roiList[roiListID].append(roi)
 		self.mainPlotWidget.addItem(roi)
 		roi.sigRegionChanged.connect(updatePlot)
+		roi.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
+		roi.sigClicked.connect(self.on_roiSelected)
+		roi.sigRegionChangeStarted.connect(self.on_roiSelected)
 		plot.show()
 		updatePlot()
 
@@ -231,6 +235,9 @@ class standardPlot(QtGui.QWidget):
 		self.roiList[CONST_ROI_BOTH_LIST].append(roi)
 		self.mainPlotWidget.addItem(roi)
 		roi.sigRegionChanged.connect(self.on_updateBothRoiPlot)
+		roi.setAcceptedMouseButtons(QtCore.Qt.LeftButton)
+		roi.sigClicked.connect(self.on_roiSelected)
+		roi.sigRegionChangeStarted.connect(self.on_roiSelected)
 		self.ROIPlotItemRightWidget.show()
 		self.ROIPlotItemBottomWidget.show()
 		self.on_updateBothRoiPlot()
@@ -238,7 +245,9 @@ class standardPlot(QtGui.QWidget):
 	def removeROI(self, roi):
 		if roi in self.roiList[CONST_ROI_HOR_LIST]:
 			if type(roi) is SingleLineROI:
+				roi.sigClicked.disconnect(self.on_roiSelected)
 				roi.sigRegionChanged.disconnect()
+				roi.sigRegionChangeStarted.disconnect()
 			else:
 				print "Could not remove ROI plot"
 				return
@@ -249,7 +258,9 @@ class standardPlot(QtGui.QWidget):
 
 		if roi in self.roiList[CONST_ROI_VER_LIST]:
 			if type(roi) is SingleLineROI:
+				roi.sigClicked.disconnect(self.on_roiSelected)
 				roi.sigRegionChanged.disconnect()
+				roi.sigRegionChangeStarted.disconnect()
 			else:
 				print "Could not remove ROI plot"
 				return
@@ -260,7 +271,9 @@ class standardPlot(QtGui.QWidget):
 
 		if roi in self.roiList[CONST_ROI_BOTH_LIST]:
 			if type(roi) is pg.RectROI:
+				roi.sigClicked.disconnect(self.on_roiSelected)
 				roi.sigRegionChanged.disconnect()
+				roi.sigRegionChangeStarted.disconnect()
 			else:
 				print "Could not remove ROI plot"
 				return
@@ -274,6 +287,7 @@ class standardPlot(QtGui.QWidget):
 
 		if len(self.roiList[CONST_ROI_VER_LIST]) == 0 and len(self.roiList[CONST_ROI_BOTH_LIST]) == 0:
 			self.ROIPlotItemRightWidget.hide()
+
 
 	# Slots
 	# 
@@ -337,6 +351,9 @@ class standardPlot(QtGui.QWidget):
 	def on_updateBothRoiPlot(self):
 		self.on_updateHorRoiPlot()
 		self.on_updateVerRoiPlot()
+
+	def on_roiSelected(self,roi):
+		self.roiSelected.emit(roi)
 
 	def on_thirdDimSliderMoved(self, val):
 		self.setCurrentIndex(val)
@@ -412,16 +429,10 @@ class standardPlot(QtGui.QWidget):
 	def on_hSliceRoiChange(self,roi):
 		img = roi.getArrayRegion(np.asarray(self.cData.data), self.image, axes=(0,1))
 		self.hSliceImage.setImage(img, autoLevels=True)
-		#shape = img.shape
-		#ratio = float(shape[1]/shape[0])
-		#self.hSlicePlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
 
 	def on_vSliceRoiChange(self,roi):
 		img = roi.getArrayRegion(np.asarray(self.cData.data), self.image, axes=(0,1))
 		self.vSliceImage.setImage(img, autoLevels=True)
-		#shape = img.shape
-		#ratio = float(shape[1]/shape[0])
-		#self.vSlicePlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
 
 	def getProcessedImage(self):
 		image = np.asarray(self.cData.data)
@@ -731,6 +742,7 @@ class glImageSlicesPlot(QtGui.QWidget):
 class SingleLineROI(pg.ROI):
 
 	linkedPlot = None
+	originalState = None
 
 	def __init__(self, positions=(None, None), pos=None, handles=(None, None), scaleCenter=None, **args):
 		if pos is None:
@@ -744,6 +756,8 @@ class SingleLineROI(pg.ROI):
 				"LineSegmentROI must be defined by exactly 2 positions. For more points, use PolyLineROI.")
 		for i, p in enumerate(positions):
 			self.addScaleRotateHandle(p, center=scaleCenter, item=handles[i])
+
+		self.originalState = self.saveState()
 
 
 	def listPoints(self):
@@ -812,3 +826,6 @@ class SingleLineROI(pg.ROI):
 			rgns.append(r)
 
 		return np.concatenate(rgns, axis=axes[0])
+
+	def reset(self):
+		self.setState(self.originalState)

@@ -14,6 +14,21 @@ from model.ArpesData import MakeMapWorker
 
 class ARPESPQGController(QtGui.QMainWindow):
 
+	__selectedRoi = None
+	
+	def getSelectedRoi(self):
+		return self.__selectedRoi
+
+	def setSelectedRoi(self, d):
+		self.__selectedRoi = d
+		print "set"
+
+	def delSelectedRoi(self):
+		print "delete selected roi"
+		del self.__selectedRoi
+
+	selectedRoi = property(getSelectedRoi,setSelectedRoi,delSelectedRoi)
+
 	def __init__(self, cData, parent=None):
 		super(ARPESPQGController, self ).__init__()
 		self.view = Ui_GenericPQGView()
@@ -33,6 +48,8 @@ class ARPESPQGController(QtGui.QMainWindow):
 
 		roiTools = Tools_ROIWidget(self)		
 		self.view.toolsLayout.addWidget(roiTools)
+		self.plotWidget.roiSelected.connect(self.on_roiSelected)
+
 		
 		if len(self.cData.data.shape) == 3:
 			viewsTools = Tools_ViewsWidget(self)
@@ -67,6 +84,9 @@ class ARPESPQGController(QtGui.QMainWindow):
 
 	def on_btnRemBoxRoi(self):
 		self.plotWidget.remBoxRoi()
+
+	def on_roiSelected(self, roi):
+		self.selectedRoi = roi
 
 	## Views tools slots
 	def on_openVolumeView(self):
