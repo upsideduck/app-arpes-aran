@@ -18,11 +18,11 @@ class Tools_ROIWidget(QtGui.QWidget):
 		self.ui = Ui_Tools_ROIWidget()
 		self.ui.setupUi(self)
 		self.ui.horAddILROIBtn.clicked.connect(parent.on_btnAddHorIlRoi)
-		self.ui.horRemILROIBtn.clicked.connect(parent.on_btnRemHorIlRoi)
 		self.ui.verAddILROIBtn.clicked.connect(parent.on_btnAddVerIlRoi)
-		self.ui.verRemILROIBtn.clicked.connect(parent.on_btnRemVerIlRoi)
 		self.ui.addBoxROIBtn.clicked.connect(parent.on_btnAddBoxRoi)
-		self.ui.remBoxROIBtn.clicked.connect(parent.on_btnRemBoxRoi)
+		self.ui.removeROIBtn.clicked.connect(parent.on_btnRemRoi)
+		self.ui.resetROIBtn.clicked.connect(parent.on_btnResetRoi)
+		self.ui.screenAngleROICheckBox.stateChanged[int].connect(parent.on_screenAngleROICheckBox)
 
 
 class Tools_ViewsWidget(QtGui.QWidget):
