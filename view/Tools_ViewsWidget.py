@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'view/ui/Tools_ViewsWidget.ui'
 #
-# Created: Thu Apr 28 15:08:12 2016
+# Created: Wed May 18 16:16:08 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,7 +12,7 @@ from PySide import QtCore, QtGui
 class Ui_Tools_ViewsWidget(object):
     def setupUi(self, Tools_ViewsWidget):
         Tools_ViewsWidget.setObjectName("Tools_ViewsWidget")
-        Tools_ViewsWidget.resize(128, 112)
+        Tools_ViewsWidget.resize(128, 162)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -36,6 +36,8 @@ class Ui_Tools_ViewsWidget(object):
         self.slicesViewBtn.setObjectName("slicesViewBtn")
         self.verticalLayout_2.addWidget(self.slicesViewBtn)
         self.verticalLayout.addWidget(self.groupBox)
+        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(Tools_ViewsWidget)
         QtCore.QMetaObject.connectSlotsByName(Tools_ViewsWidget)

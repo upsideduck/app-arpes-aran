@@ -93,7 +93,6 @@ class MainController(QtGui.QMainWindow):
         dir_path = self.dirmodel.filePath(index)
         self.filemodel.setRootPath(dir_path)
         self.view.fileView.setRootIndex(self.filemodel.index(dir_path))
-
     def on_fileselected(self, selected, deselected):
         if self.cData:
             del self.cData
