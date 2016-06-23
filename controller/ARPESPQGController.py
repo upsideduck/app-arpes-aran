@@ -157,6 +157,7 @@ class ARPESPQGController(QtGui.QMainWindow):
 
 	## ARPES tools slots
 	def on_cboxKSpaceChanged(self,val):
+
 		self.selectedRoi = None
 		if val == QtCore.Qt.Checked and self.cData.kdata is None:
 			self.mapCreationThread = QtCore.QThread()  # no parent!

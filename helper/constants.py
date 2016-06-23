@@ -19,7 +19,7 @@ CONST_TALBEHEADERS = ['File name', 'E Angle', 'Width', 'R Angle', 'High[eV]', 'L
 CONST_AUTOCOLUMNALT = ("none",CONST_TALBEHEADERS[3])
 
 DATA_ROOT_FOLDER = "/Users/johanadell/Documents/Data/ARAN"
-
+#DATA_ROOT_FOLDER = "/Users"
 
 CONST_DATATYPE_GENERIC = 1
 CONST_DATATYPE_ARPES = 2

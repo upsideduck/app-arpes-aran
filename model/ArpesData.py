@@ -247,7 +247,8 @@ class MakeMapWorker(QtCore.QObject):
 		self.ctx = cl.create_some_context()
 		self.queue = cl.CommandQueue(self.ctx, properties=cl.command_queue_properties.PROFILING_ENABLE,)			
 		
-		f = open('model/kxky.cl', 'r')
+		#f = open(str(os.path.dirname(os.path.abspath(__file__)))+'/kxky.cl', 'r')
+		f = open('cl/kxky.cl', 'r')
 		fstr = "".join(f.readlines())
 		self.program = cl.Program(self.ctx, fstr).build()
 		mf = cl.mem_flags
