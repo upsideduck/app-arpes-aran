@@ -78,41 +78,37 @@ class standardPlot(QtGui.QWidget):
 		grid.setColumnStretch(0, 10)
 		grid.setRowStretch(0, 10)
 
-	def setData(self, cData, zAxis=None, metaDataOutput=None):
-		if cData != None:
-			cData.nbDataChanged.connect(self.on_dataChanged)
-			self.cData = cData
-
+	def setData(self, newData, zAxis=None, metaDataOutput=None):
+		## Remove old data
+		if self.cData and newData:
+			self.cData.nbDataChanged.disconnect(self.on_dataChanged)
+			self.cData = None
+		
+		## Remove any third dim layouts if shown previously
+		if len(self.thirdDimToolsLayouts):
+			self.removeThirdDimTools()
+		
+		## Add new data
+		if newData != None:
+			newData.nbDataChanged.connect(self.on_dataChanged)
+			self.cData = newData
 		else:
 			return
 
-		# Remove any third dim layouts if shown previously
-		if len(self.thirdDimToolsLayouts):
-			self.removeThirdDimToolsLayouts()
-
 		if self.cData.is3D():
 			if zAxis == None:
-				zAxis = 2
+				self.zAxis = 2
 			self.addThirdDimTools()
-			self.setZAxis(zAxis)
 		else:
 			self.showSlices = False # Alwasy set false for none 3D data
-			self.setZAxis(None)
+			self.zAxis = None
 
-		self.updateImage()
-		self.updateImageAxes()
-
-
-		# self.image.scale(self.scaleAxisHorizontal,self.scaleAxisVertical)
-		# self.image.setPos(self.posOrigoAxisHorizontal,self.posOrigoAxisVertical)
-		self.ROIPlotItemRightWidget.getPlotItem().setLabel('bottom', text="I")
-		self.mainPlotWidget.invertY(False)
-		ratio = (self.lengthAxisVertical / self.lengthAxisHorizontal) / (
-		self.scaleAxisHorizontal / self.scaleAxisVertical)
-		self.mainPlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
-
+		## Load metadata into placeholder
 		if metaDataOutput:
 			metaDataOutput.setText(self.cData.root.NXentry[self.cData.entryId].tree)
+
+		## Update plot on data change
+		self.on_dataChanged()
 
 	def addThirdDimTools(self):
 		grid = self.layout()
@@ -158,13 +154,12 @@ class standardPlot(QtGui.QWidget):
 		grid.addLayout(thirdDimLayout, 2, 0, 1, 3)
 		self.thirdDimToolsLayouts.append(thirdDimLayout)
 
-	def removeThirdDimToolsLayouts(self):
+	def removeThirdDimTools(self):
 		for layout in self.thirdDimToolsLayouts:
 			for i in reversed(range(layout.count())):
 				layout.itemAt(i).widget().setParent(None)
 			self.thirdDimToolsLayouts.remove(layout)
 			del layout
-
 
 	def updateImage(self):
 		if not self.cData:
@@ -184,8 +179,201 @@ class standardPlot(QtGui.QWidget):
 			if self.roiList[CONST_ROI_VER_LIST]:
 				self.on_updateVerRoiPlot()
 
+	def updateImageAxes(self):
+
+		# Not set on first run
+		try:
+			oldScaleh = self.scaleAxisHorizontal
+			oldScalev = self.scaleAxisVertical
+		except Exception, e:
+			oldScaleh = 1
+			oldScalev = 1
+
+
+
+		######
+		## Change all static parameters to image axis
+		######
+		if self.zAxis == 0:
+			self.scaleAxisHorizontal = float((self.cData.axis2[-1] - self.cData.axis2[0]) / len(self.cData.axis2))
+			self.scaleAxisVertical = float(self.cData.axis3[-1] - self.cData.axis3[0]) / len(self.cData.axis3)
+			self.lengthAxisHorizontal = len(self.cData.axis2)
+			self.lengthAxisVertical = len(self.cData.axis3)
+			self.lengthAxisZ = len(self.cData.axis1)
+			self.posOrigoAxisHorizontal = float(self.cData.axis2[0])
+			self.posOrigoAxisVertical = float(self.cData.axis3[0])
+			self.nameAxisHorizontal = self.cData.axis2name
+			self.nameAxisVertical = self.cData.axis3name
+			self.nameAxisZ = self.cData.axis1name
+			self.axisZarr = np.asarray(self.cData.axis1)
+		elif self.zAxis == 1:
+			self.scaleAxisHorizontal = float((self.cData.axis1[-1] - self.cData.axis1[0]) / len(self.cData.axis1))
+			self.scaleAxisVertical = float(self.cData.axis3[-1] - self.cData.axis3[0]) / len(self.cData.axis3)
+			self.lengthAxisHorizontal = len(self.cData.axis1)
+			self.lengthAxisVertical = len(self.cData.axis3)
+			self.lengthAxisZ = len(self.cData.axis2)
+			self.posOrigoAxisHorizontal = float(self.cData.axis1[0])
+			self.posOrigoAxisVertical = float(self.cData.axis3[0])
+			self.nameAxisHorizontal = self.cData.axis1name
+			self.nameAxisVertical = self.cData.axis3name
+			self.nameAxisZ = self.cData.axis2name
+			self.axisZarr = np.asarray(self.cData.axis2)
+		elif self.zAxis == 2:
+			self.scaleAxisHorizontal = float((self.cData.axis1[-1] - self.cData.axis1[0]) / len(self.cData.axis1))
+			self.scaleAxisVertical = float(self.cData.axis2[-1] - self.cData.axis2[0]) / len(self.cData.axis2)
+			self.lengthAxisHorizontal = len(self.cData.axis1)
+			self.lengthAxisVertical = len(self.cData.axis2)
+			self.lengthAxisZ = len(self.cData.axis3)
+			self.posOrigoAxisHorizontal = float(self.cData.axis1[0])
+			self.posOrigoAxisVertical = float(self.cData.axis2[0])
+			self.nameAxisHorizontal = self.cData.axis1name
+			self.nameAxisVertical = self.cData.axis2name
+			self.nameAxisZ = self.cData.axis3name
+			self.axisZarr = np.asarray(self.cData.axis3)
+		else:
+			self.scaleAxisHorizontal = float((self.cData.axis1[-1] - self.cData.axis1[0]) / len(self.cData.axis1))
+			self.scaleAxisVertical = float(self.cData.axis2[-1] - self.cData.axis2[0]) / len(self.cData.axis2)
+			self.lengthAxisHorizontal = len(self.cData.axis1)
+			self.lengthAxisVertical = len(self.cData.axis2)
+			self.posOrigoAxisHorizontal = float(self.cData.axis1[0])
+			self.posOrigoAxisVertical = float(self.cData.axis2[0])
+			self.nameAxisHorizontal = self.cData.axis1name
+			self.nameAxisVertical = self.cData.axis2name
+		
+
+		######
+		## Update image to new position
+		######	
+		t = QtGui.QTransform()
+		t.translate(self.posOrigoAxisHorizontal, self.posOrigoAxisVertical)
+		t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
+		self.image.setTransform(t)
+		self.mainPlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
+		self.mainPlotWidget.setLabel('left', text=self.nameAxisVertical)
+		self.ROIPlotItemRightWidget.getPlotItem().setLabel('bottom', text="I")
+		self.mainPlotWidget.invertY(False)
+		ratio = (self.lengthAxisVertical / self.lengthAxisHorizontal) / (
+		self.scaleAxisHorizontal / self.scaleAxisVertical)
+		self.mainPlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
+
+		######
+		## Update thid dimenssion tools
+		######
+		if self.cData.is3D():
+			self.thirdDimSlider.setRange(0, self.lengthAxisZ - 1)
+			self.thirdDimSlider.valueChanged[int].connect(self.on_thirdDimSliderMoved)
+			self.thirdDimNameLbl.setText(self.nameAxisZ)
+			self.thirdDimValueQSBox.setRange(self.axisZarr[0], self.axisZarr[-1])
+			self.thirdDimValueQSBox.setSingleStep((self.axisZarr[-1] - self.axisZarr[0]) / (self.lengthAxisZ - 1))
+			self.thirdDimValueQSBox.valueChanged.connect(self.on_thirdDimQSBoxChanged)
+			#self.thirdDimValueQSBox.setValue(self.thirdDimSlider.value())
+
+		######
+		## Update image slices to new position
+		######			
+		if self.showSlices and self.hSliceRoi and self.vSliceRoi:
+			oldPnth = self.hSliceRoi.pos()
+			oldPntv = self.vSliceRoi.pos()
+
+			newScaleh = self.scaleAxisHorizontal/oldScaleh
+			newScalev = self.scaleAxisVertical/oldScalev
+
+			newPnth = (oldPnth.x()*newScaleh,oldPnth.y()*newScaleh)
+			newPntv = (oldPntv.x()*newScaleh,oldPntv.y()*newScalev)
+			self.hSliceRoi.scale(newScaleh,center=[0,0])
+			self.vSliceRoi.scale(newScalev,center=[0,0])
+			self.hSliceRoi.setPos(newPnth)
+			self.vSliceRoi.setPos(newPntv)
+
+			th = QtGui.QTransform()
+			th.translate(self.posOrigoAxisHorizontal, self.axisZarr[0])
+			th.scale(self.scaleAxisHorizontal, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
+			self.hSliceImage.setTransform(th)
+			self.hSlicePlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
+			self.hSlicePlotWidget.setLabel('left', text=self.nameAxisZ)
+			self.on_hSliceRoiChange(self.hSliceRoi)
+
+			tv = QtGui.QTransform()
+			tv.translate(self.posOrigoAxisVertical, self.axisZarr[0])
+			tv.scale(self.scaleAxisVertical, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
+			self.vSliceImage.setTransform(tv)
+			self.vSlicePlotWidget.setLabel('bottom', text=self.nameAxisVertical)
+			self.vSlicePlotWidget.setLabel('left', text=self.nameAxisZ)
+			self.on_vSliceRoiChange(self.vSliceRoi)
+		
+
+		for roi in self.roiList[CONST_ROI_HOR_LIST]:
+			oldPnth = roi.pos()
+			newScaleh = self.scaleAxisHorizontal/oldScaleh
+			newPnth = (oldPnth.x()*newScaleh,oldPnth.y()*newScaleh)
+			roi.scale(newScaleh,center=[0,0])
+			roi.setPos(newPnth)
+		
+		for roi in self.roiList[CONST_ROI_VER_LIST]:
+			oldPntv = roi.pos()
+			newScalev = self.scaleAxisVertical/oldScalev
+			newPntv = (oldPntv.x()*newScaleh,oldPntv.y()*newScalev)
+			roi.scale(newScalev,center=[0,0])
+			roi.setPos(newPntv)
+		
+		for roi in self.roiList[CONST_ROI_BOTH_LIST]:
+			oldPntv = roi.pos()
+			newScalev = self.scaleAxisVertical/oldScalev
+			newPntv = (oldPntv.x()*newScaleh,oldPntv.y()*newScalev)
+			roi.scale(newScalev,center=[0,0])
+			roi.setPos(newPntv)
+		
+				
+
+	def getProcessedImage(self):
+		image = np.asarray(self.cData.data)
+
+		if len(image.shape) == 2:
+			procImage = image
+		elif len(image.shape) == 3:
+			if self.zAxis == 0:
+				procImage = image[self.currentIndex, :, :]
+			elif self.zAxis == 1:
+				procImage = image[:, self.currentIndex, :]
+			elif self.zAxis == 2:
+				procImage = image[:, :, self.currentIndex]
+			else:
+				return None
+		else:
+			return None
+
+		self.levelMin, self.levelMax = list(map(float, self.quickMinMax(procImage)))
+
+		return procImage
+
+	def setCurrentIndex(self, index):
+		self.currentIndex = np.clip(index, 0, self.cData.data.shape[self.zAxis] - 1)
+		self.updateImage()
+
+	def quickMinMax(self, data):
+		"""
+		Estimate the min/max values of *data* by subsampling.
+		"""
+		while data.size > 1e6:
+			ax = np.argmax(data.shape)
+			sl = [slice(None)] * data.ndim
+			sl[ax] = slice(None, None, 2)
+			data = data[sl]
+		return np.nanmin(data), np.nanmax(data)
+
+	def centerPoint(self):
+		return [self.posOrigoAxisHorizontal + self.lengthAxisHorizontal * self.scaleAxisHorizontal / 2,
+				self.posOrigoAxisVertical + self.lengthAxisVertical * self.scaleAxisVertical / 2]
+
+	def hInitSlicePos(self):
+		centerPoint = self.centerPoint()
+		return ([self.posOrigoAxisHorizontal, centerPoint[1]],[self.posOrigoAxisHorizontal + self.lengthAxisHorizontal * self.scaleAxisHorizontal,centerPoint[1]])
+
+	def vInitSlicePos(self):
+		centerPoint = self.centerPoint()
+		return ([centerPoint[0], self.posOrigoAxisVertical],[centerPoint[0], self.posOrigoAxisVertical + self.lengthAxisVertical * self.scaleAxisVertical])
+	
 	## ROI functions
-	#
 	#
 	#
 	def addSingleLineROI(self, plot):
@@ -210,7 +398,7 @@ class standardPlot(QtGui.QWidget):
 			return None
 
 		angle = 0
-		roi = SingleLineROI(positions=initPos, scaleCenter=centerPoint, onPlot=self)
+		roi = SingleLineROI(positions=initPos, scaleCenter=centerPoint)
 		roi.setPen(QtGui.QPen(QtGui.QColor(255, 255, 0, 200)))
 		roi.setZValue(1)
 		self.roiList[roiListID].append(roi)
@@ -292,11 +480,9 @@ class standardPlot(QtGui.QWidget):
 			for roi in l:
 				self.removeROI(roi)
 
-	# Slots
+	## Slots
 	# 
 	#
-
-
 	def on_updateHorRoiPlot(self):
 		self.ROIPlotItemBottomWidget.getPlotItem().clear()
 		for roi in self.roiList[CONST_ROI_HOR_LIST]:
@@ -427,7 +613,7 @@ class standardPlot(QtGui.QWidget):
 			self.hSlicePlotWidget.removeItem(self.hSliceZaxisLine)
 			self.hSliceZaxisLine = None
 			self.hSliceRoi.sigRegionChanged.disconnect(self.on_hSliceRoiChange)
-			self.vSliceRoi.sigRegionChangeStarted.disconnect(self.on_roiSelected)
+			self.hSliceRoi.sigRegionChangeStarted.disconnect(self.on_roiSelected)
 			self.hSliceRoi.sigClicked.disconnect(self.on_roiSelected)
 			self.hSliceRoi = None
 			
@@ -464,152 +650,19 @@ class standardPlot(QtGui.QWidget):
 		tv.scale(scale, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
 		self.vSliceImage.setTransform(tv)
 
-
-	def getProcessedImage(self):
-		image = np.asarray(self.cData.data)
-
-		if len(image.shape) == 2:
-			procImage = image
-		elif len(image.shape) == 3:
-			if self.zAxis == 0:
-				procImage = image[self.currentIndex, :, :]
-			elif self.zAxis == 1:
-				procImage = image[:, self.currentIndex, :]
-			elif self.zAxis == 2:
-				procImage = image[:, :, self.currentIndex]
-			else:
-				return None
-		else:
-			return None
-
-		self.levelMin, self.levelMax = list(map(float, self.quickMinMax(procImage)))
-
-		return procImage
-
-	def setZAxis(self, index):
-		self.zAxis = index
-		if self.zAxis == 0:
-			self.scaleAxisHorizontal = float((self.cData.axis2[-1] - self.cData.axis2[0]) / len(self.cData.axis2))
-			self.scaleAxisVertical = float(self.cData.axis3[-1] - self.cData.axis3[0]) / len(self.cData.axis3)
-			self.lengthAxisHorizontal = len(self.cData.axis2)
-			self.lengthAxisVertical = len(self.cData.axis3)
-			self.lengthAxisZ = len(self.cData.axis1)
-			self.posOrigoAxisHorizontal = float(self.cData.axis2[0])
-			self.posOrigoAxisVertical = float(self.cData.axis3[0])
-			self.nameAxisHorizontal = self.cData.axis2name
-			self.nameAxisVertical = self.cData.axis3name
-			self.nameAxisZ = self.cData.axis1name
-			self.axisZarr = np.asarray(self.cData.axis1)
-		elif self.zAxis == 1:
-			self.scaleAxisHorizontal = float((self.cData.axis1[-1] - self.cData.axis1[0]) / len(self.cData.axis1))
-			self.scaleAxisVertical = float(self.cData.axis3[-1] - self.cData.axis3[0]) / len(self.cData.axis3)
-			self.lengthAxisHorizontal = len(self.cData.axis1)
-			self.lengthAxisVertical = len(self.cData.axis3)
-			self.lengthAxisZ = len(self.cData.axis2)
-			self.posOrigoAxisHorizontal = float(self.cData.axis1[0])
-			self.posOrigoAxisVertical = float(self.cData.axis3[0])
-			self.nameAxisHorizontal = self.cData.axis1name
-			self.nameAxisVertical = self.cData.axis3name
-			self.nameAxisZ = self.cData.axis2name
-			self.axisZarr = np.asarray(self.cData.axis2)
-		elif self.zAxis == 2:
-			self.scaleAxisHorizontal = float((self.cData.axis1[-1] - self.cData.axis1[0]) / len(self.cData.axis1))
-			self.scaleAxisVertical = float(self.cData.axis2[-1] - self.cData.axis2[0]) / len(self.cData.axis2)
-			self.lengthAxisHorizontal = len(self.cData.axis1)
-			self.lengthAxisVertical = len(self.cData.axis2)
-			self.lengthAxisZ = len(self.cData.axis3)
-			self.posOrigoAxisHorizontal = float(self.cData.axis1[0])
-			self.posOrigoAxisVertical = float(self.cData.axis2[0])
-			self.nameAxisHorizontal = self.cData.axis1name
-			self.nameAxisVertical = self.cData.axis2name
-			self.nameAxisZ = self.cData.axis3name
-			self.axisZarr = np.asarray(self.cData.axis3)
-		else:
-			self.scaleAxisHorizontal = float((self.cData.axis1[-1] - self.cData.axis1[0]) / len(self.cData.axis1))
-			self.scaleAxisVertical = float(self.cData.axis2[-1] - self.cData.axis2[0]) / len(self.cData.axis2)
-			self.lengthAxisHorizontal = len(self.cData.axis1)
-			self.lengthAxisVertical = len(self.cData.axis2)
-			self.posOrigoAxisHorizontal = float(self.cData.axis1[0])
-			self.posOrigoAxisVertical = float(self.cData.axis2[0])
-			self.nameAxisHorizontal = self.cData.axis1name
-			self.nameAxisVertical = self.cData.axis2name
-			return
-
-		self.thirdDimSlider.setRange(0, self.lengthAxisZ - 1)
-		self.thirdDimSlider.valueChanged[int].connect(self.on_thirdDimSliderMoved)
-		self.thirdDimNameLbl.setText(self.nameAxisZ)
-		self.thirdDimValueQSBox.setRange(self.axisZarr[0], self.axisZarr[-1])
-		self.thirdDimValueQSBox.setSingleStep((self.axisZarr[-1] - self.axisZarr[0]) / (self.lengthAxisZ - 1))
-		self.thirdDimValueQSBox.valueChanged.connect(self.on_thirdDimQSBoxChanged)
-		#self.thirdDimValueQSBox.setValue(self.thirdDimSlider.value())
-
-	def updateImageAxes(self):
-		t = QtGui.QTransform()
-		t.translate(self.posOrigoAxisHorizontal, self.posOrigoAxisVertical)
-		t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
-		self.image.setTransform(t)
-
-		if self.showSlices:
-			th = QtGui.QTransform()
-			th.translate(self.posOrigoAxisHorizontal, self.axisZarr[0])
-			th.scale(self.scaleAxisHorizontal, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
-			self.hSliceImage.setTransform(th)
-			self.hSlicePlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
-			self.hSlicePlotWidget.setLabel('left', text=self.nameAxisZ)
-
-			tv = QtGui.QTransform()
-			tv.translate(self.posOrigoAxisVertical, self.axisZarr[0])
-			tv.scale(self.scaleAxisVertical, float(self.axisZarr[-1] - self.axisZarr[0]) / len(self.axisZarr))
-			self.vSliceImage.setTransform(tv)
-			self.vSlicePlotWidget.setLabel('bottom', text=self.nameAxisVertical)
-			self.vSlicePlotWidget.setLabel('left', text=self.nameAxisZ)
-
-		self.mainPlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
-		self.mainPlotWidget.setLabel('left', text=self.nameAxisVertical)
-
-	def setCurrentIndex(self, index):
-		self.currentIndex = np.clip(index, 0, self.cData.data.shape[self.zAxis] - 1)
-		self.updateImage()
-
-	def quickMinMax(self, data):
-		"""
-		Estimate the min/max values of *data* by subsampling.
-		"""
-		while data.size > 1e6:
-			ax = np.argmax(data.shape)
-			sl = [slice(None)] * data.ndim
-			sl[ax] = slice(None, None, 2)
-			data = data[sl]
-		return np.nanmin(data), np.nanmax(data)
-
-	def centerPoint(self):
-		return [self.posOrigoAxisHorizontal + self.lengthAxisHorizontal * self.scaleAxisHorizontal / 2,
-				self.posOrigoAxisVertical + self.lengthAxisVertical * self.scaleAxisVertical / 2]
-
-	def hInitSlicePos(self):
-		centerPoint = self.centerPoint()
-		return ([self.posOrigoAxisHorizontal, centerPoint[1]],[self.posOrigoAxisHorizontal + self.lengthAxisHorizontal * self.scaleAxisHorizontal,centerPoint[1]])
-
-	def vInitSlicePos(self):
-		centerPoint = self.centerPoint()
-		return ([centerPoint[0], self.posOrigoAxisVertical],[centerPoint[0], self.posOrigoAxisVertical + self.lengthAxisVertical * self.scaleAxisVertical])
-
 	def on_dataChanged(self):
-		self.setZAxis(self.zAxis)
-		self.updateImage()
-		if self.showSlices:
-			self.thirdDimSlicesCheckBox.setCheckState(QtCore.Qt.Unchecked)
-		self.removeAllROIs()
 		self.updateImageAxes()
+		self.updateImage()
+		#if self.showSlices:
+			#self.thirdDimSlicesCheckBox.setCheckState(QtCore.Qt.Unchecked)
+		#self.removeAllROIs()
 
-	## General interaction functions
-	#
-	#
 
 
-	# ROI
+
+	## ROI
 	# 
-
+	#
 	def addHorIlRoi(self):
 		roi = self.addSingleLineROI(self.ROIPlotItemBottomWidget)
 		self.on_roiSelected(roi)
@@ -776,12 +829,11 @@ class glImageSlicesPlot(QtGui.QWidget):
 
 class SingleLineROI(pg.ROI):
 
-	onPlot = None
 	originalState = None
 	userRemovable = True
 
 
-	def __init__(self, positions=(None, None), pos=None, handles=(None, None), scaleCenter=None, onPlot = None, userRemovable = True, **args):
+	def __init__(self, positions=(None, None), pos=None, handles=(None, None), scaleCenter=None, userRemovable = True, **args):
 		if pos is None:
 			pos = [0, 0]
 		if scaleCenter is None:
@@ -795,9 +847,7 @@ class SingleLineROI(pg.ROI):
 			self.addScaleRotateHandle(p, center=scaleCenter, item=handles[i])
 
 		self.originalState = self.saveState()
-		self.onPlot = onPlot
 		self.userRemovable = userRemovable
-
 
 
 	def listPoints(self):
@@ -811,6 +861,22 @@ class SingleLineROI(pg.ROI):
 		h2 = self.handles[1]['item'].pos()
 		p.drawLine(h1, h2)
 
+	def refToImage(self,image):
+		imgPts = [self.mapToItem(image, h['item'].pos()) for h in self.handles]
+		return imgPts
+
+	def updateLine(self, positions, handles=(None, None)):
+		self.clearPoints()
+		center = [(positions[0].x()+positions[1].x())/2,(positions[0].y()+positions[1].y())/2]
+		for i, p in enumerate(positions):
+			self.addScaleRotateHandle(p, center=center, item=handles[i])
+   
+	def clearPoints(self):
+		"""
+		Remove all handles and segments.
+		"""
+		while len(self.handles) > 0:
+			self.removeHandle(self.handles[0]['item'])
 
 	def boundingRect(self):
 		return self.shape().boundingRect()
