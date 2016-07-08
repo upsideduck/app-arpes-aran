@@ -129,9 +129,11 @@ class Arpes2DSpectrumConverter(Spectrum):
 		#Clean Corrected buffer
 		buff = [int(line.strip()) for line in listOfValues]
 		#Create array from data
-		wave = np.asarray(buff[0:columns])
-		for i in range(1,rows):
-			wave = np.vstack((wave,np.asarray(buff[i*columns:i*columns+columns])))
+		#wave = np.asarray(buff[0:columns])
+		#for i in range(1,rows):
+		#	wave = np.vstack((wave,np.asarray(buff[i*columns:i*columns+columns])))
+		wave = np.asarray(buff)
+		wave = wave.reshape(rows,columns)
 		return wave
 
 
