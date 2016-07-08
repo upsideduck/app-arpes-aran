@@ -1,6 +1,10 @@
 ##
-# Constants
+# Config
 ###
+from configparser import SafeConfigParser
+config = SafeConfigParser()
+config.read('ini/config.ini')
+
 CONST_ZAXIS_AVSPA = "Energy"
 CONST_ZAXIS_EVSA = "Rotation angle"
 CONST_ZAXIS_EVSkA = "ky"
@@ -18,7 +22,7 @@ R_ANGLE_COLUMN_NR = 3
 CONST_TALBEHEADERS = ['File name', 'E Angle', 'Width', 'R Angle', 'High[eV]', 'Low[eV]', 'Wf[eV]' ]
 CONST_AUTOCOLUMNALT = ("none",CONST_TALBEHEADERS[3])
 
-DATA_ROOT_FOLDER = "/Users/johanadell/Documents/Data/ARAN"
+DATA_ROOT_FOLDER = config.get('Data','DefaultFolder')
 #DATA_ROOT_FOLDER = "/Users"
 
 CONST_DATATYPE_GENERIC = 1

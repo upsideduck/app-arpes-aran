@@ -1,4 +1,4 @@
-from helper.constants import *
+from helper.config import *
 import numpy as np
 from PySide import QtCore 
 

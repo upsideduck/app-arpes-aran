@@ -1,5 +1,5 @@
 from PySide import QtCore, QtGui
-from helper.constants import *
+from helper.config import *
 import numpy as np
 import ext.pyqtgraph as pg
 from ext.pyqtgraph.dockarea import *

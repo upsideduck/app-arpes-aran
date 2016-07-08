@@ -20,7 +20,7 @@ class ArpesData(GenericData):
 	vmax = 1
 	thread = None
 	createMapWorker = None
-	dataType = CONST_DATATYPE_ARPES
+	dataType = CONST_DATATYPE_ARPES 
 
 	def __init__(self, nxRoot, entryId = 0):
 		super(ArpesData, self).__init__(nxRoot, entryId)
@@ -242,7 +242,8 @@ class MakeMapWorker(QtCore.QObject):
 		e0 = float(self.energy[0])
 		delta_e = float(self.energy[1]-self.energy[0])
 
-		os.environ['PYOPENCL_COMPILER_OUTPUT'] = '1'
+		os.environ['PYOPENCL_COMPILER_OUTPUT'] = config.get('PyOpenCl','PYOPENCL_COMPILER_OUTPUT')
+		os.environ['PYOPENCL_CTX'] = config.get('PyOpenCl','PYOPENCL_CTX')
 
 		self.ctx = cl.create_some_context()
 		self.queue = cl.CommandQueue(self.ctx, properties=cl.command_queue_properties.PROFILING_ENABLE,)			

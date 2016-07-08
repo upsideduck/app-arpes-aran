@@ -1,8 +1,9 @@
 # !/usr/bin/python
 # -*- coding: utf-8 -*-
-from helper.constants import *
+from helper.config import * ## Provides app configuration, should be present in all controllers
 import sys
 from PySide import QtCore, QtGui
+from configparser import SafeConfigParser
 from view.mainView import Ui_MainWindow
 from controller.ArpesBuildController import *
 from controller.GenericPQGController import *
