@@ -312,14 +312,14 @@ class standardPlot(QtGui.QWidget):
 		for roi in self.roiList[CONST_ROI_VER_LIST]:
 			oldPntv = roi.pos()
 			newScalev = self.scaleAxisVertical/oldScalev
-			newPntv = (oldPntv.x()*newScaleh,oldPntv.y()*newScalev)
+			newPntv = (oldPntv.x()*newScalev,oldPntv.y()*newScalev)
 			roi.scale(newScalev,center=[0,0])
 			roi.setPos(newPntv)
 		
 		for roi in self.roiList[CONST_ROI_BOTH_LIST]:
 			oldPntv = roi.pos()
 			newScalev = self.scaleAxisVertical/oldScalev
-			newPntv = (oldPntv.x()*newScaleh,oldPntv.y()*newScalev)
+			newPntv = (oldPntv.x()*newScalev,oldPntv.y()*newScalev)
 			roi.scale(newScalev,center=[0,0])
 			roi.setPos(newPntv)
 		
