@@ -308,6 +308,8 @@ class standardPlot(QtGui.QWidget):
 			newPnth = (oldPnth.x()*newScaleh,oldPnth.y()*newScaleh)
 			roi.scale(newScaleh,center=[0,0])
 			roi.setPos(newPnth)
+			roi.originalState['size'] = roi.originalState['size']*pg.Point(newScaleh,newScaleh)
+			roi.originalState['pos'] = (roi.originalState['pos'][0]*newScaleh,roi.originalState['pos'][1]*newScaleh)
 		
 		for roi in self.roiList[CONST_ROI_VER_LIST]:
 			oldPntv = roi.pos()
@@ -315,6 +317,8 @@ class standardPlot(QtGui.QWidget):
 			newPntv = (oldPntv.x()*newScalev,oldPntv.y()*newScalev)
 			roi.scale(newScalev,center=[0,0])
 			roi.setPos(newPntv)
+			roi.originalState['size'] = roi.originalState['size']*pg.Point(newScalev,newScalev)
+			roi.originalState['pos'] = (roi.originalState['pos'][0]*newScalev,roi.originalState['pos'][1]*newScalev)
 		
 		for roi in self.roiList[CONST_ROI_BOTH_LIST]:
 			oldPntv = roi.pos()
@@ -322,8 +326,9 @@ class standardPlot(QtGui.QWidget):
 			newPntv = (oldPntv.x()*newScalev,oldPntv.y()*newScalev)
 			roi.scale(newScalev,center=[0,0])
 			roi.setPos(newPntv)
-		
-				
+			roi.originalState['size'] = roi.originalState['size']*pg.Point(newScalev,newScalev)
+			roi.originalState['pos'] = (roi.originalState['pos'][0]*newScalev,roi.originalState['pos'][1]*newScalev)
+			
 
 	def getProcessedImage(self):
 		image = np.asarray(self.cData.data)
