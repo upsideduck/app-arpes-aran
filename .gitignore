@@ -9,3 +9,6 @@ isosurface.py
 part1.cl
 kxkytest.cl
 test.py
+build/*
+dist/*
+*sublime*
