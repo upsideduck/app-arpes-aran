@@ -1,4 +1,4 @@
-from ext.nexpy.api import nexus as nx
+from nexpy.api import nexus as nx
 from model.ArpesData import *
 from helper.converter import Arpes2DSpectrumConverter
 

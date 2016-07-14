@@ -1,9 +1,9 @@
 from PyQt4 import QtCore, QtGui
 from helper.config import *
 import numpy as np
-import ext.pyqtgraph as pg
-from ext.pyqtgraph.dockarea import *
-import ext.pyqtgraph.opengl as gl
+import pyqtgraph as pg
+from pyqtgraph.dockarea import *
+import pyqtgraph.opengl as gl
 
 class standardPlot(QtGui.QWidget):
 

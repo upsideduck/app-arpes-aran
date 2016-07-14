@@ -2,10 +2,10 @@ import re
 import numpy as np
 import matplotlib as ml
 import matplotlib.pyplot as plt
-from ext.nexpy.api import nexus as nx
+from nexpy.api import nexus as nx
 import os
 import model.nexus_template as nxtemplate
-from ext.igor import binarywave as igorbw
+from igor import binarywave as igorbw
 from copy import *
 
 

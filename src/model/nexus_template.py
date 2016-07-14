@@ -1,4 +1,4 @@
-from ext.nexpy.api import nexus as nx
+from nexpy.api import nexus as nx
 
 def arpes(entryName):
 	#Create NeXus object

@@ -3,7 +3,7 @@
 *.nxs
 *.pxp
 *.sr
-ext/*
+src/ext/*
 dataslicing.py
 isosurface.py
 part1.cl
