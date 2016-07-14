@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from ext.nexpy.api import nexus as nx
 import os
 import model.nexus_template as nxtemplate
+from ext.igor import binarywave as igorbw
+from copy import *
 
 
 ######################################
@@ -135,6 +137,78 @@ class Arpes2DSpectrumConverter(Spectrum):
 		wave = np.asarray(buff)
 		wave = wave.reshape(rows,columns)
 		return wave
+
+	@classmethod
+	def ibwToNx(self, inputfile, entryId = None ,rotation=None):
+		filecontent = igorbw.load(inputfile)
+		filename = os.path.basename(inputfile).split('.')[0]
+		header = {}
+		entryname = None
+		wave = []
+		axes = []
+
+		print "---- Start: ibw->nexus ----"
+		print "Parsing: " + filename
+
+		#Loop through and find header data
+		entryname = filecontent['wave']['wave_header']['bname']
+		wave = np.asarray(copy(filecontent['wave']['wData']))
+
+		note = filecontent['wave']['note']
+		noteList = [x.split('=') for x in note.split('\r')]
+		noteList = [x for x in noteList if len(x) == 2]
+		noteDict = dict(noteList)
+
+
+		#Check if file is loaded correctly
+		if entryname and len(wave.shape) == 2:
+			print "File seems valid"
+		else:
+			print "File not valid"
+			return -1
+
+		axesSteps = filecontent['wave']['wave_header']['sfA']
+		axesInit = filecontent['wave']['wave_header']['sfB']
+		axesDim = filecontent['wave']['wave_header']['nDim']
+		axesUnits = filecontent['wave']['wave_header']['dimUnits']
+
+		axes = [np.linspace(axesInit[0],axesDim[0]*axesSteps[0]+axesInit[0],axesDim[0]), np.linspace(axesInit[1],axesDim[1]*axesSteps[1]+axesInit[1],axesDim[1])]
+		units = [''.join(axesUnits[0]),''.join(axesUnits[1])]
+
+		print "Create nexus format"
+		#Nexus format
+		if(entryId == None):
+			entry = nxtemplate.arpes('entry1')
+		else:
+			entry = nxtemplate.arpes(entryId)
+
+		entry.title = entryname
+		#Meta data
+		if 'Ep' in noteDict:
+			entry.instrument.analyser.pass_energy = noteDict['Ep']
+			entry.instrument.analyser.pass_energy.units = 'eV'
+		if 'LensMode' in noteDict:
+			entry.instrument.analyser.lens_mode = noteDict["LensMode"].strip('\x00')
+		if 'Ek' in noteDict:
+			entry.instrument.analyser.kinetic_energy = noteDict["Ek"]
+			entry.instrument.analyser.kinetic_energy.units = 'eV'
+		#entry.instrument.manipulator.rangle = rotation
+		#entry.instrument.manipulator.rangle.units = 'deg'
+
+
+		if int(wave.shape[0]) == len(axes[0]) and int(wave.shape[1]) == len(axes[1]):
+			wave = wave.transpose()
+
+		#Data
+		data = nx.NXfield(wave, name='data')
+		energies = nx.NXfield(axes[0],units=units[0],name='energies')
+		angles = nx.NXfield(axes[1],units=units[1],name='angles')
+		entry.analyser = nx.NXdata(data,(angles,energies))
+
+		print "Done with "+entryname
+		self.nxEntry = entry
+		print "---- End: ibw->nexus ------"
+		return self
 
 
 class Arpes3DSpectrumConverter(Spectrum):
