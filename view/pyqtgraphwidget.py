@@ -1,4 +1,4 @@
-from PySide import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
 from helper.config import *
 import numpy as np
 import ext.pyqtgraph as pg

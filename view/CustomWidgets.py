@@ -1,4 +1,4 @@
-from PySide import QtGui
+from PyQt4 import QtGui
 from view.Tools_ARPESWidget import Ui_Tools_ARPESWidget
 from view.Tools_ROIWidget import Ui_Tools_ROIWidget
 from view.Tools_ViewsWidget import Ui_Tools_ViewsWidget

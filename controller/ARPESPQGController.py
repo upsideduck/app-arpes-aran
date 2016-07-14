@@ -1,5 +1,5 @@
 from helper.config import *
-from PySide import QtCore, QtGui 
+from PyQt4 import QtCore, QtGui 
 from ext.nexpy.api import nexus as nx
 import numpy as np
 from view.GenericPQGView import Ui_GenericPQGView

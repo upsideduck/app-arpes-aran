@@ -1,6 +1,6 @@
 from helper.config import *
 import numpy as np
-from PySide import QtCore 
+from PyQt4 import QtCore 
 
 
 class GenericData(QtCore.QObject):

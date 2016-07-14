@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 from helper.config import * ## Provides app configuration, should be present in all controllers
 import sys
-from PySide import QtCore, QtGui
+
+from PyQt4 import QtCore, QtGui
+
 from configparser import SafeConfigParser
 from view.mainView import Ui_MainWindow
 from controller.ArpesBuildController import *
@@ -13,7 +15,6 @@ import numpy as np
 from copy import *
 
 from view.pyqtgraphwidget import standardPlot
-
 from helper.SpectrumFile import *
 
 
@@ -68,7 +69,7 @@ class MainController(QtGui.QMainWindow):
         # Setup file model
         self.filemodel = QtGui.QFileSystemModel()
         # Don't show folders, just files
-        self.filemodel.setNameFilters(["*.nxs", "*sp2"])
+        self.filemodel.setNameFilters(["*.nxs", "*sp2", "*ibw"])
         self.filemodel.setNameFilterDisables(False)
         self.filemodel.setFilter(QtCore.QDir.NoDotAndDotDot | QtCore.QDir.Files)
         self.view.fileView.setModel(self.filemodel)
@@ -101,7 +102,8 @@ class MainController(QtGui.QMainWindow):
         indexes = selected.indexes()
         # Get selected path of file view
         file_path = self.filemodel.filePath(indexes[0])
-        self.cData = SpectrumFile.load(file_path)
+        r,msg,self.cData = SpectrumFile.load(file_path)
+        self.on_displayStatusMessage(msg)
         if self.cData == None:
             return
         self.updatePlot()
@@ -129,6 +131,10 @@ class MainController(QtGui.QMainWindow):
         self.view.metaDataView.setText(self.cData.root.NXentry[self.cData.entryId].tree)
         self.updatePlot()
 
+    def on_displayStatusMessage(self,message):
+        self.view.statusBar.showMessage(message,10000)
+        print message
+
     ## Helper functions
     def updatePlot(self):
         self.DataPlot.setData(self.cData)
@@ -139,6 +145,7 @@ class MainController(QtGui.QMainWindow):
         for i, m in enumerate(self.cData.root.entries):
             self.view.entriesBox.addItem(m, i)
         self.view.entriesBox.currentIndexChanged[int].connect(self.on_entriesBoxChanged)
+
 
 
 def main():

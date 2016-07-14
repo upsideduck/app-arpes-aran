@@ -1,7 +1,7 @@
 
 from matplotlib.figure import Figure
 import matplotlib.cm as cm
-from PySide import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
 from matplotlib.backend_bases import FigureManagerBase, key_press_handler
 from matplotlib.backends.backend_qt4agg import (
     FigureCanvasQTAgg as FigureCanvas,

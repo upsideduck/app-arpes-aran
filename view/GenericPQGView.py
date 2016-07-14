@@ -1,22 +1,35 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'view/ui/GenericPQGViewMW.ui'
+# Form implementation generated from reading ui file 'src/view/ui/GenericPQGViewMW.ui'
 #
-# Created: Wed May 18 16:16:08 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.2
+# Created by: PyQt4 UI code generator 4.11.4
 #
 # WARNING! All changes made in this file will be lost!
 
-from PySide import QtCore, QtGui
+from PyQt4 import QtCore, QtGui
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
 class Ui_GenericPQGView(object):
     def setupUi(self, GenericPQGView):
-        GenericPQGView.setObjectName("GenericPQGView")
+        GenericPQGView.setObjectName(_fromUtf8("GenericPQGView"))
         GenericPQGView.resize(859, 782)
         self.centralwidget = QtGui.QWidget(GenericPQGView)
-        self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
+        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.leftColumSplitter = QtGui.QSplitter(self.centralwidget)
         self.leftColumSplitter.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
@@ -25,10 +38,10 @@ class Ui_GenericPQGView(object):
         sizePolicy.setHeightForWidth(self.leftColumSplitter.sizePolicy().hasHeightForWidth())
         self.leftColumSplitter.setSizePolicy(sizePolicy)
         self.leftColumSplitter.setOrientation(QtCore.Qt.Horizontal)
-        self.leftColumSplitter.setObjectName("leftColumSplitter")
+        self.leftColumSplitter.setObjectName(_fromUtf8("leftColumSplitter"))
         self.metaDataSplitter = QtGui.QSplitter(self.leftColumSplitter)
         self.metaDataSplitter.setOrientation(QtCore.Qt.Horizontal)
-        self.metaDataSplitter.setObjectName("metaDataSplitter")
+        self.metaDataSplitter.setObjectName(_fromUtf8("metaDataSplitter"))
         self.plottoolsSplitter = QtGui.QSplitter(self.metaDataSplitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -37,32 +50,30 @@ class Ui_GenericPQGView(object):
         self.plottoolsSplitter.setSizePolicy(sizePolicy)
         self.plottoolsSplitter.setAutoFillBackground(True)
         self.plottoolsSplitter.setOrientation(QtCore.Qt.Vertical)
-        self.plottoolsSplitter.setObjectName("plottoolsSplitter")
+        self.plottoolsSplitter.setObjectName(_fromUtf8("plottoolsSplitter"))
         self.layoutWidget = QtGui.QWidget(self.plottoolsSplitter)
-        self.layoutWidget.setObjectName("layoutWidget")
+        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
         self.mainPlotLayout = QtGui.QGridLayout(self.layoutWidget)
-        self.mainPlotLayout.setContentsMargins(0, 0, 0, 0)
-        self.mainPlotLayout.setObjectName("mainPlotLayout")
+        self.mainPlotLayout.setObjectName(_fromUtf8("mainPlotLayout"))
         self.layoutWidget1 = QtGui.QWidget(self.plottoolsSplitter)
-        self.layoutWidget1.setObjectName("layoutWidget1")
+        self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
         self.toolsLayout = QtGui.QHBoxLayout(self.layoutWidget1)
-        self.toolsLayout.setContentsMargins(0, 0, 0, 0)
-        self.toolsLayout.setObjectName("toolsLayout")
+        self.toolsLayout.setObjectName(_fromUtf8("toolsLayout"))
         self.metaDataView = QtGui.QTextEdit(self.metaDataSplitter)
         self.metaDataView.setEnabled(False)
         self.metaDataView.setMinimumSize(QtCore.QSize(300, 0))
         self.metaDataView.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.metaDataView.setLayoutDirection(QtCore.Qt.LeftToRight)
-        self.metaDataView.setObjectName("metaDataView")
+        self.metaDataView.setObjectName(_fromUtf8("metaDataView"))
         self.gridLayout.addWidget(self.leftColumSplitter, 0, 0, 1, 1)
         GenericPQGView.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(GenericPQGView)
-        self.statusbar.setObjectName("statusbar")
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
         GenericPQGView.setStatusBar(self.statusbar)
 
         self.retranslateUi(GenericPQGView)
         QtCore.QMetaObject.connectSlotsByName(GenericPQGView)
 
     def retranslateUi(self, GenericPQGView):
-        GenericPQGView.setWindowTitle(QtGui.QApplication.translate("GenericPQGView", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        GenericPQGView.setWindowTitle(_translate("GenericPQGView", "MainWindow", None))
 
