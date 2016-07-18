@@ -151,10 +151,10 @@ class Arpes2DSpectrumConverter(Spectrum):
 		print "Parsing: " + filename
 
 		#Loop through and find header data
-		entryname = filecontent['wave']['wave_header']['bname']
+		entryname = str(copy(filecontent['wave']['wave_header']['bname']))
 		wave = np.asarray(copy(filecontent['wave']['wData']))
 
-		note = filecontent['wave']['note']
+		note = str(copy(filecontent['wave']['note']))
 		noteList = [x.split('=') for x in note.split('\r')]
 		noteList = [x for x in noteList if len(x) == 2]
 		noteDict = dict(noteList)
@@ -192,8 +192,8 @@ class Arpes2DSpectrumConverter(Spectrum):
 		if 'Ek' in noteDict:
 			entry.instrument.analyser.kinetic_energy = noteDict["Ek"]
 			entry.instrument.analyser.kinetic_energy.units = 'eV'
-		#entry.instrument.manipulator.rangle = rotation
-		#entry.instrument.manipulator.rangle.units = 'deg'
+		entry.instrument.manipulator.rangle = rotation
+		entry.instrument.manipulator.rangle.units = 'deg'
 
 
 		if int(wave.shape[0]) == len(axes[0]) and int(wave.shape[1]) == len(axes[1]):
