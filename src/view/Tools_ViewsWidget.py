@@ -25,13 +25,14 @@ except AttributeError:
 class Ui_Tools_ViewsWidget(object):
     def setupUi(self, Tools_ViewsWidget):
         Tools_ViewsWidget.setObjectName(_fromUtf8("Tools_ViewsWidget"))
-        Tools_ViewsWidget.resize(128, 162)
+        Tools_ViewsWidget.resize(128, 96)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Tools_ViewsWidget.sizePolicy().hasHeightForWidth())
         Tools_ViewsWidget.setSizePolicy(sizePolicy)
         self.verticalLayout = QtGui.QVBoxLayout(Tools_ViewsWidget)
+        self.verticalLayout.setContentsMargins(-1, 6, -1, 6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.groupBox = QtGui.QGroupBox(Tools_ViewsWidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
@@ -41,6 +42,7 @@ class Ui_Tools_ViewsWidget(object):
         self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout_2.setContentsMargins(-1, 6, -1, 6)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.volumeViewBtn = QtGui.QPushButton(self.groupBox)
         self.volumeViewBtn.setObjectName(_fromUtf8("volumeViewBtn"))
@@ -49,8 +51,6 @@ class Ui_Tools_ViewsWidget(object):
         self.slicesViewBtn.setObjectName(_fromUtf8("slicesViewBtn"))
         self.verticalLayout_2.addWidget(self.slicesViewBtn)
         self.verticalLayout.addWidget(self.groupBox)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(Tools_ViewsWidget)
         QtCore.QMetaObject.connectSlotsByName(Tools_ViewsWidget)

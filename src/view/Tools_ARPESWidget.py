@@ -25,19 +25,19 @@ except AttributeError:
 class Ui_Tools_ARPESWidget(object):
     def setupUi(self, Tools_ARPESWidget):
         Tools_ARPESWidget.setObjectName(_fromUtf8("Tools_ARPESWidget"))
-        Tools_ARPESWidget.resize(122, 85)
+        Tools_ARPESWidget.resize(122, 51)
         self.verticalLayout = QtGui.QVBoxLayout(Tools_ARPESWidget)
+        self.verticalLayout.setContentsMargins(-1, 6, -1, 6)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.groupBox = QtGui.QGroupBox(Tools_ARPESWidget)
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.groupBox)
+        self.verticalLayout_2.setContentsMargins(-1, 6, -1, 6)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.kSpaceCheckBox = QtGui.QCheckBox(self.groupBox)
         self.kSpaceCheckBox.setObjectName(_fromUtf8("kSpaceCheckBox"))
         self.verticalLayout_2.addWidget(self.kSpaceCheckBox)
         self.verticalLayout.addWidget(self.groupBox)
-        spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.verticalLayout.addItem(spacerItem)
 
         self.retranslateUi(Tools_ARPESWidget)
         QtCore.QMetaObject.connectSlotsByName(Tools_ARPESWidget)

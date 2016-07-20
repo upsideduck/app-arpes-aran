@@ -3,6 +3,7 @@ from view.Tools_ARPESWidget import Ui_Tools_ARPESWidget
 from view.Tools_ROIWidget import Ui_Tools_ROIWidget
 from view.Tools_ViewsWidget import Ui_Tools_ViewsWidget
 from view.Tools_ARPESWidget import Ui_Tools_ARPESWidget
+from view.Tools_ImageWidget import Ui_Tools_ImageWidget
 
 class Tools_ARPESWidget(QtGui.QWidget):
 	def __init__(self, parent=None):
@@ -23,6 +24,16 @@ class Tools_ROIWidget(QtGui.QWidget):
 		self.ui.removeROIBtn.clicked.connect(parent.on_btnRemRoi)
 		self.ui.resetROIBtn.clicked.connect(parent.on_btnResetRoi)
 		self.ui.screenAngleROICheckBox.stateChanged[int].connect(parent.on_screenAngleROICheckBox)
+
+class Tools_ImageWidget(QtGui.QWidget):
+	def __init__(self, parent):
+		super(Tools_ImageWidget, self).__init__()
+		self.ui = Ui_Tools_ImageWidget()
+		self.ui.setupUi(self)
+		self.ui.imageRotationSlider.valueChanged[int].connect(parent.on_imageRotationSliderMoved)
+		self.ui.imageRotationSB.valueChanged[float].connect(parent.on_imageRotationSBChanged)
+		self.ui.imageRotationSlider.sliderReleased.connect(parent.on_imageRotationSliderReleased)
+
 
 
 class Tools_ViewsWidget(QtGui.QWidget):
