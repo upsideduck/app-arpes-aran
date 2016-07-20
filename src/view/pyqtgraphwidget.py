@@ -78,6 +78,8 @@ class standardPlot(QtGui.QWidget):
 		grid.setColumnStretch(0, 10)
 		grid.setRowStretch(0, 10)
 
+	def sizeHint(self):
+		return QtCore.QSize(self.maximumSize())
 	def setData(self, newData, zAxis=None, metaDataOutput=None):
 		## Remove old data
 		if self.cData and newData:
