@@ -10,3 +10,4 @@ python ./pyuic.py src/view/ui/Tools_ROIWidget2.ui > src/view/Tools_ROIWidget.py
 python ./pyuic.py src/view/ui/GenericPQGViewMW.ui > src/view/GenericPQGView.py
 python ./pyuic.py src/view/ui/VolumeView.ui > src/view/VolumeView.py
 python ./pyuic.py src/view/ui/ImageSlicesView.ui > src/view/ImageSlicesView.py
+python ./pyuic.py src/view/ui/Tools_ImageWidget.ui > src/view/Tools_ImageWidget.py

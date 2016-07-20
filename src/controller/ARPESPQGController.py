@@ -5,6 +5,7 @@ import numpy as np
 from view.GenericPQGView import Ui_GenericPQGView
 from view.pyqtgraphwidget import *
 from view.CustomWidgets import Tools_ROIWidget
+from view.CustomWidgets import Tools_ImageWidget
 from view.CustomWidgets import Tools_ViewsWidget
 from view.CustomWidgets import Tools_ARPESWidget
 from controller.VolumeViewController import *
@@ -50,11 +51,14 @@ class ARPESPQGController(QtGui.QMainWindow):
 		self.plotWidget.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)	
 		self.view.mainPlotLayout.addWidget(self.plotWidget)
 
+		self.imageTools = Tools_ImageWidget(self)
+		self.view.toolsLayout.addWidget(self.imageTools)
+
 		self.roiTools = Tools_ROIWidget(self)		
 		self.view.toolsLayout.addWidget(self.roiTools)
 		self.plotWidget.roiSelected.connect(self.on_roiSelected)
 
-		
+
 		if len(self.cData.data.shape) == 3:
 			viewsTools = Tools_ViewsWidget(self)
 			self.view.toolsLayout.addWidget(viewsTools)
@@ -65,7 +69,7 @@ class ARPESPQGController(QtGui.QMainWindow):
 		self.arpesTools = Tools_ARPESWidget(self)
 		self.view.toolsLayout.addWidget(self.arpesTools)
 
-		spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+		spacerItem = QtGui.QSpacerItem(40, 2000, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
 		self.view.toolsLayout.addItem(spacerItem)
 
 	def closeEvent(self,event):
@@ -154,6 +158,28 @@ class ARPESPQGController(QtGui.QMainWindow):
 	def on_openSlicesView(self):
 		self.windows.append(ImageSlicesViewController(self.cData))
 		self.windows[-1].show()
+
+	## Image tools slots
+	def on_imageRotationSliderMoved(self,val):
+		angle = val/10.0
+		self.plotWidget.rotation = angle
+		
+		self.imageTools.ui.imageRotationSB.valueChanged.disconnect(self.on_imageRotationSBChanged)
+		self.imageTools.ui.imageRotationSB.setValue(angle)
+		self.imageTools.ui.imageRotationSB.valueChanged[float].connect(self.on_imageRotationSBChanged)
+		
+
+	def on_imageRotationSBChanged(self,val):
+		angle = val
+	
+		self.plotWidget.rotateImage(angle)
+		
+		self.imageTools.ui.imageRotationSlider.valueChanged.disconnect(self.on_imageRotationSliderMoved)
+		self.imageTools.ui.imageRotationSlider.setValue(angle*10)
+		self.imageTools.ui.imageRotationSlider.valueChanged[int].connect(self.on_imageRotationSliderMoved)
+
+	def on_imageRotationSliderReleased(self):
+		self.plotWidget.updateAuxiliaryPlots()
 
 	## ARPES tools slots
 	def on_cboxKSpaceChanged(self,val):

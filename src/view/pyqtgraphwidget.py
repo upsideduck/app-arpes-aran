@@ -7,6 +7,21 @@ import pyqtgraph.opengl as gl
 
 class standardPlot(QtGui.QWidget):
 
+	__rotation = 0
+	
+	def getRotation(self):
+		return self.__rotation
+
+	def setRotation(self, d):
+		self.__rotation = d
+		if self.cData:
+			self.transformMainImage()
+
+	def delRotation(self):
+		del self.__rotation
+
+	rotation = property(getRotation,setRotation,delRotation)
+
 	roiSelected = QtCore.Signal(pg.ROI)
 
 	def __init__(self, showHistogram=False, showSlices=False, parent=None, ):
@@ -78,8 +93,11 @@ class standardPlot(QtGui.QWidget):
 		grid.setColumnStretch(0, 10)
 		grid.setRowStretch(0, 10)
 
+
 	def sizeHint(self):
 		return QtCore.QSize(self.maximumSize())
+
+
 	def setData(self, newData, zAxis=None, metaDataOutput=None):
 		## Remove old data
 		if self.cData and newData:
@@ -246,20 +264,18 @@ class standardPlot(QtGui.QWidget):
 		######
 		## Update image to new position
 		######	
-		t = QtGui.QTransform()
-		t.translate(self.posOrigoAxisHorizontal, self.posOrigoAxisVertical)
-		t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
-		self.image.setTransform(t)
+		self.transformMainImage()
 		self.mainPlotWidget.setLabel('bottom', text=self.nameAxisHorizontal)
 		self.mainPlotWidget.setLabel('left', text=self.nameAxisVertical)
 		self.ROIPlotItemRightWidget.getPlotItem().setLabel('bottom', text="I")
 		self.mainPlotWidget.invertY(False)
-		ratio = (self.lengthAxisVertical / self.lengthAxisHorizontal) / (
-		self.scaleAxisHorizontal / self.scaleAxisVertical)
+		ratio = (self.lengthAxisVertical / self.lengthAxisHorizontal) / (self.scaleAxisHorizontal / self.scaleAxisVertical)
+		#ratio = None
 		self.mainPlotWidget.getViewBox().setAspectLocked(lock=True, ratio=ratio)
+		
 
 		######
-		## Update thid dimenssion tools
+		## Update third dimenssion tools
 		######
 		if self.cData.is3D():
 			self.thirdDimSlider.setRange(0, self.lengthAxisZ - 1)
@@ -331,6 +347,33 @@ class standardPlot(QtGui.QWidget):
 			roi.originalState['size'] = roi.originalState['size']*pg.Point(newScalev,newScalev)
 			roi.originalState['pos'] = (roi.originalState['pos'][0]*newScalev,roi.originalState['pos'][1]*newScalev)
 			
+	def updateAuxiliaryPlots(self):
+		if self.showSlices and self.hSliceRoi and self.vSliceRoi:
+			self.on_hSliceRoiChange(self.hSliceRoi)
+			self.on_vSliceRoiChange(self.vSliceRoi)
+		self.on_updateBothRoiPlot()
+
+	def transformMainImage(self):	
+		t = QtGui.QTransform()
+		ratio = (self.lengthAxisVertical / self.lengthAxisHorizontal) / (self.scaleAxisHorizontal / self.scaleAxisVertical)
+		 
+		x=self.lengthAxisHorizontal*self.scaleAxisHorizontal/2
+		y=self.lengthAxisVertical*self.scaleAxisVertical/2
+
+		x2 = x+self.posOrigoAxisHorizontal
+		y2 = y+self.posOrigoAxisVertical
+
+		t.translate(x2,y2)
+
+		if ratio < 1:
+			t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
+			t.rotate(self.rotation)
+		else:
+			t.rotate(self.rotation)
+			t.scale(self.scaleAxisHorizontal, self.scaleAxisVertical)
+	
+		t.translate(-x/self.scaleAxisHorizontal,-y/self.scaleAxisVertical)
+		self.image.setTransform(t)
 
 	def getProcessedImage(self):
 		image = np.asarray(self.cData.data)
@@ -489,7 +532,7 @@ class standardPlot(QtGui.QWidget):
 
 	## Slots
 	# 
-	#
+
 	def on_updateHorRoiPlot(self):
 		self.ROIPlotItemBottomWidget.getPlotItem().clear()
 		for roi in self.roiList[CONST_ROI_HOR_LIST]:
@@ -551,12 +594,12 @@ class standardPlot(QtGui.QWidget):
 		self.on_updateHorRoiPlot()
 		self.on_updateVerRoiPlot()
 
+
 	def on_roiSelected(self,roi):
 		self.roiSelected.emit(roi)
 
 	def on_thirdDimSliderMoved(self, val):
 		self.setCurrentIndex(val)
-
 		step = ((self.axisZarr[-1] - self.axisZarr[0]) / (len(self.axisZarr) - 1))
 		current = self.thirdDimValueQSBox.value() - self.axisZarr[0]
 
@@ -660,9 +703,6 @@ class standardPlot(QtGui.QWidget):
 	def on_dataChanged(self):
 		self.updateImageAxes()
 		self.updateImage()
-		#if self.showSlices:
-			#self.thirdDimSlicesCheckBox.setCheckState(QtCore.Qt.Unchecked)
-		#self.removeAllROIs()
 
 
 
