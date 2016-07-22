@@ -245,7 +245,11 @@ class MakeMapWorker(QtCore.QObject):
 		os.environ['PYOPENCL_COMPILER_OUTPUT'] = config.get('PyOpenCl','PYOPENCL_COMPILER_OUTPUT')
 		os.environ['PYOPENCL_CTX'] = config.get('PyOpenCl','PYOPENCL_CTX')
 
-		self.ctx = cl.create_some_context()
+		platform = cl.get_platforms()
+		my_cpu_devices = [platform[0].get_devices(device_type=cl.device_type.CPU)[0]]
+		self.ctx = cl.Context(devices=my_cpu_devices)
+		
+		#self.ctx = cl.create_some_context()
 		self.queue = cl.CommandQueue(self.ctx, properties=cl.command_queue_properties.PROFILING_ENABLE,)			
 		
 		#f = open(str(os.path.dirname(os.path.abspath(__file__)))+'/kxky.cl', 'r')
