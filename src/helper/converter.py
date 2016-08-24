@@ -216,6 +216,7 @@ class Arpes3DSpectrumConverter(Spectrum):
 	@classmethod
 	def listOfEntriesToNx(self,listOfArpesEntries):
 		nxEntry = nxtemplate.arpes('entry1')
+
 		data = nx.NXfield(np.array([]),name='data')
 		energies = nx.NXfield(units='eV',name='energies')
 		angles = nx.NXfield(units='deg',name='angles')
@@ -233,12 +234,24 @@ class Arpes3DSpectrumConverter(Spectrum):
 		rangles = nx.NXfield([np.array(entry.instrument.manipulator.rangle)],units='deg',name='rangles')
 		nxEntry.analyser = nx.NXdata(data,(rangles,angles,energies))
 
+		nxEntry.instrument.analyser.pass_energy = nx.NXfield([np.array(float(entry.instrument.analyser.pass_energy))],units=entry.instrument.analyser.pass_energy.units)
+		nxEntry.instrument.analyser.lens_mode = nx.NXfield(entry.instrument.analyser.lens_mode)
+		nxEntry.instrument.analyser.kinetic_energy = nx.NXfield([np.array(float(entry.instrument.analyser.kinetic_energy))],units=entry.instrument.analyser.kinetic_energy.units)
+		nxEntry.instrument.manipulator.rangle = nx.NXfield([np.array(float(entry.instrument.manipulator.rangle))], units=entry.instrument.manipulator.rangle.units)
+
 		# loop through the rest of the files
 		for idx in range (1,nrOfEntries):
 			entry = listOfArpesEntries[idx]
 			olddata = np.asarray(nxEntry.analyser.data)
 			nxEntry.analyser.data = nx.NXfield(np.append(olddata,[np.asarray(entry.analyser.data)],axis=0))
-			nxEntry.analyser.rangles = nx.NXfield(np.append(np.asarray(nxEntry.analyser.rangles),entry.instrument.manipulator.rangle),units='deg',name='rangles')	
+			nxEntry.analyser.rangles = nx.NXfield(np.append(np.asarray(nxEntry.analyser.rangles),entry.instrument.manipulator.rangle),units='deg',name='rangles')
+
+			if float(nxEntry.instrument.manipulator.rangle[-1]) == float(entry.instrument.manipulator.rangle):
+				return (False,"r-angle must be different between slices.")
+
+			nxEntry.instrument.analyser.pass_energy = nx.NXfield(np.append(np.asarray(nxEntry.instrument.analyser.pass_energy),float(entry.instrument.analyser.pass_energy)),units="deg",name='pass_energy')
+			nxEntry.instrument.analyser.kinetic_energy = nx.NXfield(np.append(np.asarray(nxEntry.instrument.analyser.kinetic_energy),float(entry.instrument.analyser.kinetic_energy)))
+			nxEntry.instrument.manipulator.rangle = nx.NXfield(np.append(np.asarray(nxEntry.instrument.manipulator.rangle),float(entry.instrument.manipulator.rangle)))
 
 
 		self.nxEntry = nxEntry

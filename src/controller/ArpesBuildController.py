@@ -76,7 +76,7 @@ class ArpesBuildController(QtGui.QMainWindow):
 	def on_loadFiles(self):
 		files=QtGui.QFileDialog.getOpenFileNames(self,
 		                'Select one or more files to open',
-		                '/Users/johanadell/Box Sync/Dev/ARAN/src/data',
+		                DATA_ROOT_FOLDER,
 		                'Spectra (*.sp2 *.nxs)')
 
 		self.importFilesThread = QtCore.QThread()  # no parent!
@@ -94,11 +94,20 @@ class ArpesBuildController(QtGui.QMainWindow):
 	def on_exportFermiSurface(self):
 		listOfEntries = self.table_model.listOfEntries()
 		if len(listOfEntries) > 0:
-			filename = QtGui.QFileDialog.getSaveFileName(self, "Save file", "", ".nxs")
-			if len(filename[0]) > 0:
+			filename = QtGui.QFileDialog.getSaveFileName(self, "Save file", DATA_ROOT_FOLDER, selectedFilter='nxs')
+			if len(filename) > 0:
 				fermiSurfaceEntry = Arpes3DSpectrumConverter.listOfEntriesToNx(listOfEntries)
+				if type(fermiSurfaceEntry) == tuple:
+					QtGui.QMessageBox.critical(self, "Error", "Fermisurface could not be created.\n"+fermiSurfaceEntry[1])
+					return
+
 				root = nx.NXroot(fermiSurfaceEntry.nxEntry)
-				root.save(filename[0]+filename[1])
+				ext = os.path.splitext(str(filename))[1]
+				if ext:
+					filename = str(filename.replace(ext,".nxs"))
+				else:
+					filename = str(filename)+".nxs"
+				root.save(filename=filename)
 
 				print root.tree
 			else:
@@ -108,10 +117,14 @@ class ArpesBuildController(QtGui.QMainWindow):
 
 		# Result is a touple with (progress in %, nxEntry of processed specturm)
 	def on_fileImported(self,result):	
-		loadedData = result[1]
-		for entry in loadedData.root.NXentry:
-			self.table_model.setData(QtCore.QModelIndex(),TableRowItem(nxEntry=entry,wf=0))
-		print "File imported, "+str(result[0]*100)+"% finished"
+		loadedDataResult = result[1]
+		if loadedDataResult[0]:
+			loadedData = loadedDataResult[2]
+			for entry in loadedData.root.NXentry:
+				self.table_model.setData(QtCore.QModelIndex(),TableRowItem(nxEntry=entry,wf=0))
+			print "File imported, "+str(result[0]*100)+"% finished"
+		else:
+			print "Error: Something went wrong loading the data, file not imported"
 
 	def on_filesWorkerDone(self):
 		self.view.tableOfEntries.resizeColumnsToContents()
@@ -245,30 +258,13 @@ class ImportFilesWorker(QtCore.QObject):
 	@QtCore.Slot()
 	def processFiles(self):
 		i = 0
-		for filepath in self.files[0]:
-			
-			loadedData = SpectrumFile.load(filepath)
+		for filepath in self.files:
+			loadedData = SpectrumFile.load(filepath.replace('\n',''))
 			i += 1
 			self.progress.emit((float(i)/self.totalIter,loadedData))
 		
-			# extension = filepath.split('.')[-1]
-			# if extension == "sp2":
-			# 	processedFile = self.processSp2File(filepath,i)
-			# 	i += 1
-			# 	self.progress.emit((float(i)/self.totalIter,processedFile.nxEntry))
-			# else:
-			# 	print "Not a valid file"
+
 		self.finished.emit()
-
-
-	def processSp2File(self,filepath,iteration):
-		print "-----------------------------------"
-		entry = None
-		root = None
-		entryid = "entry"+str(iteration)
-		arpes2DSpectrum = Arpes2DSpectrumConverter.SP2ToNx(filepath,rotation=float(0.0))
-		print "-----------------------------------"
-		return arpes2DSpectrum
 
 
 
