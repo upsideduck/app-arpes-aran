@@ -78,6 +78,7 @@ class ArpesBuildController(QtGui.QMainWindow):
 		                'Select one or more files to open',
 		                DATA_ROOT_FOLDER,
 		                'Spectra (*.sp2 *.nxs)')
+		self.activateWindow()
 
 		self.importFilesThread = QtCore.QThread()  # no parent!
 		self.filesWorker = ImportFilesWorker(files)
