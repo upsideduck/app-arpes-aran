@@ -8,7 +8,7 @@ Usage:
 from setuptools import setup
 
 NAME = 'ARAN'
-VERSION = 0.5
+VERSION = 0.51
 APP = ['src/ARAN.py']
 DATA_FILES = [('cl',['src/cl/kxky.cl']),('ini',['src/ini/config.ini'])]
 OPTIONS = {'argv_emulation': True, 

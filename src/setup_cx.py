@@ -30,9 +30,12 @@ from cx_Freeze import setup, Executable
 #	return '' in pyopencl __init__.py	
 
 # Dependencies are automatically detected, but it might need fine tuning.
-build_exe_options = {"packages": ["h5py","pyopencl","OpenGL","pyqtgraph","pytools"], 
+build_exe_options = {"packages": ["h5py","pyopencl","OpenGL","pyqtgraph","pytools","pkg_resources"], 
 					 "excludes": ["tkinter","collections.abc"],
-				"include_files": ["cl/","ini/"]}
+				"include_files": ["cl/",
+								 "ini/"],
+				'include_msvcr': True}
+
 
 # GUI applications require a different base on Windows (the default is for a
 # console application).
@@ -41,7 +44,9 @@ if sys.platform == "win32":
     base = "Win32GUI"
 
 setup(  name = "ARAN",
-        version = "0.5",
+        version = "0.51",
         description = "ARPES data analysis",
         options = {"build_exe": build_exe_options},
         executables = [Executable("ARAN.py", base=base)])
+
+
